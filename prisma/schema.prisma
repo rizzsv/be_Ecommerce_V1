@@ -14,92 +14,94 @@ datasource db {
 }
 
 model User {
-  id         String       @id @default(auto()) @map("_id") @db.ObjectId
-  username   String
-  email      String       @unique
-  password   String
-  role       Role         @default(USER)
-  created_at DateTime     @default(now())
-  updated_at DateTime     @updatedAt
-  orders     Order[]
-  wishlist   Wishlist[]
-  cartItems  CartItem[]
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  username      String
+  email         String         @unique
+  password      String
+  phoneNum      String?        @unique         
+  role          Role           @default(USER)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  orders        Order[]
+  wishlist      Wishlist[]
+  cartItems     CartItem[]
   notifications Notification[]
+  logs          Log[]          @relation("UserLogs")
 }
 
 model Product {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
-  price       Float    
+  price       Float
   stock       Int
   image_url   String
-  category_id String     @db.ObjectId
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
-  category    Category   @relation(fields: [category_id], references: [id])
+  category_id String      @db.ObjectId
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+  category    Category    @relation(fields: [category_id], references: [id])
   orderItems  OrderItem[]
   cartItems   CartItem[]
   wishlist    Wishlist[]
 }
 
 model Category {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   slug       String
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   products   Product[]
 }
 
 model Order {
-  id              String      @id @default(auto()) @map("_id") @db.ObjectId
-  user_id         String      @db.ObjectId
-  status          String
-  total_amount    Float     
+  id               String      @id @default(auto()) @map("_id") @db.ObjectId
+  user_id          String      @db.ObjectId
+  status           String
+  total_amount     Float
   shipping_address String
-  payment_method  String
-  created_at      DateTime    @default(now())
-  updated_at      DateTime    @updatedAt
-  user            User        @relation(fields: [user_id], references: [id])
-  orderItems      OrderItem[]
+  payment_method   String
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+  user             User        @relation(fields: [user_id], references: [id])
+  orderItems       OrderItem[]
 }
 
 model OrderItem {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  order_id   String   @db.ObjectId
-  product_id String   @db.ObjectId
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  order_id   String  @db.ObjectId
+  product_id String  @db.ObjectId
   quantity   Int
-  price      Float  
-  order      Order    @relation(fields: [order_id], references: [id])
-  product    Product  @relation(fields: [product_id], references: [id])
+  price      Float
+  order      Order   @relation(fields: [order_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id])
 }
 
 model CartItem {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  user_id    String   @db.ObjectId
-  product_id String   @db.ObjectId
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  user_id    String  @db.ObjectId
+  product_id String  @db.ObjectId
   quantity   Int
-  user       User     @relation(fields: [user_id], references: [id])
-  product    Product  @relation(fields: [product_id], references: [id])
+  user       User    @relation(fields: [user_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id])
 }
 
 model Wishlist {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  user_id    String   @db.ObjectId
-  product_id String   @db.ObjectId
-  user       User     @relation(fields: [user_id], references: [id])
-  product    Product  @relation(fields: [product_id], references: [id])
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  user_id    String  @db.ObjectId
+  product_id String  @db.ObjectId
+  user       User    @relation(fields: [user_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id])
 }
 
 model Notification {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  user_id   String   @db.ObjectId
-  title     String
-  message   String
-  is_read   Boolean  @default(false)
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id    String   @db.ObjectId
+  title      String
+  message    String
+  is_read    Boolean  @default(false)
   created_at DateTime @default(now())
-  user      User     @relation(fields: [user_id], references: [id])
+  user       User     @relation(fields: [user_id], references: [id])
 }
 
 model Report {
@@ -107,6 +109,23 @@ model Report {
   type         String
   data         Json
   generated_at DateTime @default(now())
+}
+
+model Log {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String
+  target    String
+  request   String
+  createdAt DateTime @default(now())
+  user      User     @relation("UserLogs", fields: [userId], references: [id])
+}
+
+model LogExternal {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  ip        String
+  target    String
+  request   String
+  createdAt DateTime @default(now())
 }
 
 enum Role {

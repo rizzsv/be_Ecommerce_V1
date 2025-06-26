@@ -11,7 +11,8 @@ async function main() {
             email: 'admin@example.com',
             password: hashedPassword,
             role: 'ADMIN',
-            username: 'admin'
+            username: 'admin',
+            phoneNum: '081234567890',
         }
     })
     console.log('✅ Admin created:', admin);

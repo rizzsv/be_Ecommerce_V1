@@ -1,5 +1,5 @@
 import { Validator } from "../../utils/validator.utils";
-import { login } from "./user.model";
+import { createUser, login } from "./user.model";
 import { userSchema } from "./user.schema";
 import prisma from '../../config/prisma.config'
 import loggerConfig from '../../config/logger.config'
@@ -10,6 +10,8 @@ import {Crypto} from '../../helper/crypto.helper'
 import { Role } from "@prisma/client";
 
 export class UserService {
+
+    /** Login User */
     static async Login(req: login){
         const ctx = 'Login'
         const scp = 'user'
@@ -20,7 +22,8 @@ export class UserService {
             where: {
                 OR: [
                     {email: userRequest.identity},
-                    {username: userRequest.identity}
+                    {username: userRequest.identity},
+                    {phoneNum: userRequest.identity}
                 ],
             },
         })
@@ -49,4 +52,49 @@ export class UserService {
             role: isUserExist.role
         }
     } 
+
+    /** Register User */
+    static async addUser(req: createUser, userId?: string){
+        const ctx = 'Register'
+        const scp = 'User'
+
+        const userRequest = Validator.Validate(userId ? userSchema.createUserByAdmin : userSchema.registerUser, req)
+
+        const isUserExist = await prisma.user.count({
+            where: {
+                OR: [
+                    {email: userRequest.email},
+                    {username: userRequest.username},
+                ]
+            },
+        })
+
+        if (isUserExist !== 0){
+            loggerConfig.error(ctx, 'User already regist', scp)
+            throw new ErrorHandler(409, 'Akun sudah terdaftar')
+        }
+
+        const user = await prisma.user.create({
+            data: {
+                username: userRequest.username,
+                email: userRequest.email,
+                password: userRequest.password,
+                phoneNum: userRequest.phoneNum,
+                role: userRequest.role || Role.USER,
+            },
+        })
+
+        loggerConfig.info(ctx, `User created successfully`, scp)
+
+        return {
+            message: userId ? 'User successfully added by admin' : 'Registration successful',
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+                phoneNum: user.phoneNum,
+            }
+        }
+    }
 }

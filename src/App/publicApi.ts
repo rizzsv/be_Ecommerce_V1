@@ -6,3 +6,6 @@ export const publicApi = express.Router()
 
 //login
 publicApi.post(`${globalEnv.PREFIX}/login`, UserController.Login)
+
+//regist
+publicApi.post(`${globalEnv.PREFIX}/regist`, UserController.CreateUser)

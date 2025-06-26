@@ -10,6 +10,7 @@ export interface createUser {
     username: string
     email: string
     password: string
+    phoneNum: string
     role?: Role
 }
 

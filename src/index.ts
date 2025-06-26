@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { connectDb } from "./config/db";
 import { publicApi } from "./App/publicApi";
+import { privateApi } from "./App/privateApi";
 
 dotenv.config();
 const app = express();
@@ -17,6 +18,7 @@ app.get("/", (_, res) => {
 app.use(publicApi)
 
 // Apply Private Api Router
+app.use(privateApi)
 
 // Apply Error Middleware
 

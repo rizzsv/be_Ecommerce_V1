@@ -4,7 +4,7 @@ export class userSchema {
     
   static readonly login = Joi.object({
     identity: Joi.string().required(),
-    password: Joi.string().min(6).required(),
+    password: Joi.string().min(6).required()
   });
 
   
@@ -36,6 +36,15 @@ export class userSchema {
       'string.email': 'Format email tidak valid',
       'string.empty': 'Email tidak boleh kosong',
     }),
+
+   phoneNum: Joi.string()
+  .pattern(/^(\+62|62|0)[0-9]{9,14}$/)
+  .required()
+  .messages({
+    'string.pattern.base': 'Phone number must start with 0, 62, or +62 and contain 10-15 digits',
+    'string.empty': 'Phone number is required',
+    'any.required': 'Phone number is required',
+  }),
 
     role: Joi.string().valid('ADMIN', 'USER').required().messages({
       'any.only': 'Role harus ADMIN atau USER',
@@ -71,6 +80,15 @@ export class userSchema {
       'string.email': 'Format email tidak valid',
       'string.empty': 'Email tidak boleh kosong',
     }),
+
+    phoneNum: Joi.string()
+  .pattern(/^(\+62|62|0)[0-9]{9,14}$/)
+  .required()
+  .messages({
+    'string.pattern.base': 'Phone number must start with 0, 62, or +62 and contain 10-15 digits',
+    'string.empty': 'Phone number is required',
+    'any.required': 'Phone number is required',
+  }),
   });
 
   static readonly updateUser = Joi.object({
