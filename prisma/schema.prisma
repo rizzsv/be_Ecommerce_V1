@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -19,7 +18,7 @@ model User {
   username   String
   email      String       @unique
   password   String
-  role       String
+  role       Role         @default(USER)
   created_at DateTime     @default(now())
   updated_at DateTime     @updatedAt
   orders     Order[]
@@ -108,4 +107,9 @@ model Report {
   type         String
   data         Json
   generated_at DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  USER
 }
