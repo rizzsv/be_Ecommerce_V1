@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors"
 import { connectDb } from "./config/db";
 import { publicApi } from "./App/publicApi";
 import { privateApi } from "./App/privateApi";
@@ -9,6 +10,11 @@ const app = express();
 app.use(express.json());
 
 connectDb();
+
+app.use(cors({
+  origin: "http://localhost:3001",
+  credentials: true,
+}))
 
 app.get("/", (_, res) => {
   res.send("API Running");

@@ -42,7 +42,7 @@ export class UserController {
             const request: updateUser = req.body as updateUser
 
             const response = await UserService.updateUser(request, req.user!.role)
-            Wrapper.success(res, true, response, 'Succes Updated User', 200)
+            Wrapper.success(res, true, response, 'Succes Updated User From Admin', 200)
         } catch (error) {
             next(error)
         }
@@ -56,7 +56,7 @@ export class UserController {
             }
 
             const response = await UserService.updateUser(request, req.user!.role)
-            Wrapper.success(res, true, response, 'Succes Update User', 200)
+            Wrapper.success(res, true, response, 'Succes Updated User', 200)
         } catch (error) {
             next(error)
         }

@@ -1,5 +1,5 @@
 import { Validator } from "../../utils/validator.utils";
-import { createUser, login, updateUser } from "./user.model";
+import { createUser, getUser, login, updateUser } from "./user.model";
 import { userSchema } from "./user.schema";
 import prisma from '../../config/prisma.config'
 import loggerConfig from '../../config/logger.config'
@@ -159,5 +159,9 @@ export class UserService {
         })
 
         return{}
+    }
+
+    static async getAllUser(req: getUser) {
+        
     }
 }
