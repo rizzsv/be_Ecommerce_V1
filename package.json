@@ -21,6 +21,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.0",
+    "mustache": "^4.2.0",
+    "nodemailer": "^7.0.3",
     "winston": "^3.17.0",
     "zod": "^3.25.67"
   },
@@ -31,7 +33,9 @@
     "@types/express": "^5.0.3",
     "@types/joi": "^17.2.2",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/mustache": "^4.2.6",
     "@types/node": "^24.0.4",
+    "@types/nodemailer": "^6.4.17",
     "prisma": "^6.10.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"

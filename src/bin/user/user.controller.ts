@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { CustomRequest } from "../../config/custom.config";
-import { createUser, login, updateUser } from "./user.model";
+import { createUser, getUser, login, requestOtp, updateUser } from "./user.model";
 import LoggerService from "../../config/logger.config";
 import { UserService } from "./user.service";
 import { Wrapper } from "../../utils/wrapper.utils";
@@ -57,6 +57,62 @@ export class UserController {
 
             const response = await UserService.updateUser(request, req.user!.role)
             Wrapper.success(res, true, response, 'Succes Updated User', 200)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async GetAllUser(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+        const request: getUser = req.query as unknown as getUser
+
+        request.periode = Number(request.periode)
+        request.page = Number(request.page)
+        request.quantity = Number(request.quantity)
+
+       await logRequest(req, `GET /user/` + JSON.stringify(request));
+
+        const response = await UserService.getAllUser(request)
+        Wrapper.pagination(res, true, response.metaData, 'Succes Get User', response.data, 200)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async getUserById(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const request = req.params.id
+
+            await logRequest(req, `GET /user/${request}`)
+
+            const response= await UserService.GetUserById(request)
+            Wrapper.success(res, true, response, 'Succes Get User', 200)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async DeleteUser(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const request = req.params.id
+
+            await logRequest(req, `DELETE /user/${request}`)
+
+            const response = await UserService.DeleteUser(request)
+            Wrapper.success(res, true, response, 'Success Delete User', 200)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async RequestOtp(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const request: requestOtp = req.body as requestOtp
+
+            await logRequest(req, `POST /user/otp/${request}`)
+
+            const response = await UserService.requestOtp(request)
+            Wrapper.success(res, true, response, 'Success send otp', 200)
         } catch (error) {
             next(error)
         }

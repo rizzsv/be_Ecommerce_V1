@@ -124,4 +124,48 @@ export class userSchema {
       'string.empty': 'ID user wajib diisi',
     }),
   });
+
+  static readonly Get_User = Joi.object({
+    page: Joi.number()
+      .integer()
+      .positive()
+      .min(1)
+      .default(1),
+
+    search: Joi.string().optional(),
+
+    quantity: Joi.number()
+      .integer()
+      .positive()
+      .min(5)
+      .required(),
+
+    periode: Joi.number()
+      .integer()
+      .min(2025)
+      .max(new Date().getFullYear())
+      .optional()
+      .messages({
+        'any.required': 'Tahun wajib diisi',
+        'number.base': 'Tahun harus berupa angka',
+        'number.min': 'Tahun tidak boleh kurang dari 2025',
+        'number.max': 'Tahun belum terjadi',
+      }),
+
+    role: Joi.string()
+      .valid('ADMIN', 'USER')
+      .optional(),
+  });
+
+  static readonly Get_User_By_Id = Joi.object({
+    id: Joi.string().required()
+  });
+
+  static readonly Delete_User = Joi.object({
+    id: Joi.string().required()
+  });
+
+  static readonly Request_Otp = Joi.object({
+    email: Joi.string().email(),
+  })
 }

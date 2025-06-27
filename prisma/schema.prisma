@@ -22,6 +22,8 @@ model User {
   role          Role           @default(USER)
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
+  onDelete      Boolean        @default(false)
+  createdAt     DateTime   @default(now())
   orders        Order[]
   wishlist      Wishlist[]
   cartItems     CartItem[]

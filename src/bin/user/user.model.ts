@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 
 export interface login {
     identity: string
@@ -30,6 +30,13 @@ export interface getUser {
     quantity: number
 }
 
+export interface UserResponse {
+    id: string,
+    username: string,
+    email: string,
+    phoneNum: string,
+}
+
 export interface login {
     username: string
     password: string
@@ -52,4 +59,13 @@ export interface ChangePasswordUser {
 export interface ChangePasswordAdmin {
   userId: string
   newPassword: string
+}
+
+export function toUserResponse(user: User): UserResponse {
+    return {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        phoneNum: user.phoneNum || '',
+    }
 }

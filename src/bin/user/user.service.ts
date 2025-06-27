@@ -1,5 +1,5 @@
 import { Validator } from "../../utils/validator.utils";
-import { createUser, getUser, login, updateUser } from "./user.model";
+import { createUser, getUser, login, requestOtp, toUserResponse, updateUser, UserResponse } from "./user.model";
 import { userSchema } from "./user.schema";
 import prisma from '../../config/prisma.config'
 import loggerConfig from '../../config/logger.config'
@@ -8,6 +8,9 @@ import bcrypt from 'bcrypt'
 import {Jwt} from '../../helper/jwt.helper'
 import {Crypto} from '../../helper/crypto.helper'
 import { Role } from "@prisma/client";
+import { MetaData } from "../../utils/type.utils";
+import { CreateSecureOtp } from "../../utils/createOtp";
+import { Nodemailer } from "../../helper/nodemailer/nodemailer.helper";
 
 export class UserService {
 
@@ -82,6 +85,7 @@ export class UserService {
                 email: userRequest.email,
                 password: hashedPassword,
                 phoneNum: userRequest.phoneNum,
+                created_at: new Date(),
                 role: userRequest.role || Role.USER,
             },
         })
@@ -161,7 +165,148 @@ export class UserService {
         return{}
     }
 
+    /** Get All User */
     static async getAllUser(req: getUser) {
-        
+        const ctx = 'Get All User'
+        const scp = 'User'
+
+        const userRequest = Validator.Validate(userSchema.Get_User, req) 
+
+        const filters = {
+            ...(userRequest.search && {
+                OR: [
+                    {
+                        username: {
+                            contains: userRequest.search
+                        },
+                    },
+                ],
+            }),
+            ...(userRequest.role && {role: userRequest.role}),
+            createdAt: {
+             gte: new Date(`${userRequest.periode}-01-01T00:00:00.000Z`),
+             lte: new Date(`${userRequest.periode}-12-31T23:59:59.999Z`),
+            },
+        }
+
+        const [result, totalItem] = await Promise.all([
+            prisma.user.findMany({
+                where: filters,
+                orderBy: {
+                    createdAt: 'desc',
+                },
+                skip: (userRequest.page - 1) * userRequest.quantity,
+                take: userRequest.quantity
+            }),
+            prisma.user.count({
+                where: filters
+            }),
+        ])
+
+        if(result.length === 0) {
+            loggerConfig.warn(ctx, 'Data Not Found')
+            throw new ErrorHandler(404, 'Data tidak ditemukan')
+        }
+
+        const metaData : MetaData = {
+            totalItem,
+            currentPage: userRequest.page,
+            totalPages: Math.ceil(totalItem / userRequest.quantity),
+            quantity: userRequest.quantity
+        }
+
+        loggerConfig.info(ctx, 'Succes Get User', scp)
+
+        return {
+            data: await Promise.all(
+                result.map(async(user) => ({
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role,
+                    phoneNum: user.phoneNum,
+                })),
+            ),
+            metaData,
+        }
+    }
+
+    /** Get User By Id */
+    static async GetUserById(req: string): Promise<UserResponse> {
+        const ctx = 'Get User Id'
+        const scp = 'User'
+
+        const userRequest = Validator.Validate(userSchema.Get_User_By_Id, {id: req})
+
+        const isUserExist = await prisma.user.findUnique({
+            where: {
+                id: userRequest.id,
+            }
+        })
+
+        if(!isUserExist) {
+            loggerConfig.error(ctx, 'User Not Found', scp)
+            throw new ErrorHandler(404, 'User Tidak Ditemukan')
+        }
+
+        loggerConfig.info(ctx, 'Succes Update User', scp)
+
+        return toUserResponse(isUserExist)
+    }
+
+    static async DeleteUser(req: string) {
+        const ctx = 'Delete User'
+        const scp = 'User'
+
+        const userRequest = Validator.Validate(userSchema.Get_User_By_Id, {id: req})
+
+        const isUserExist = await prisma.user.findUnique({
+            where: {
+                id: userRequest.id,
+            }
+        })
+
+        if(!isUserExist) {
+            loggerConfig.error(ctx, 'User Not Found', scp)
+            throw new ErrorHandler(404, 'User Tidak Ditemukan')
+        }
+
+        await prisma.log.deleteMany({
+          where: { userId: userRequest.id },
+          })
+
+        await prisma.user.delete({
+            where: {
+                id: userRequest.id,
+            }
+        })
+
+        loggerConfig.info(ctx, 'Succes Delete User', scp)
+
+        return{}
+    }
+
+    static async requestOtp(req: requestOtp) {
+        const ctx = 'Request Otp'
+        const scp = 'User'
+
+        const userRequest = Validator.Validate(userSchema.Request_Otp, req)
+
+        const isUserExist = await prisma.user.findUnique({
+            where: {
+                email: userRequest.email
+            },
+        })
+
+        if(!isUserExist) {
+            loggerConfig.error(ctx, 'User Not Found', scp)
+            throw new ErrorHandler(404, 'User Tidak Ditemukan')
+        }
+
+        const otp = CreateSecureOtp()
+
+        await Nodemailer.sendUserForgotPassword(isUserExist.email, otp)
+
+        return{}
     }
 }

@@ -11,7 +11,13 @@ publicApi.post(`${globalEnv.PREFIX}/login`, UserController.Login)
 //regist
 publicApi.post(`${globalEnv.PREFIX}/regist`, UserController.CreateUser)
 
-/** api for next user */
+/** Api Forget Password */
+publicApi.post(
+    `${globalEnv.PREFIX}/user/otp`,
+    UserController.RequestOtp
+)
+
+/** api for user */
 
 publicApi.put(
     `${globalEnv.PREFIX}/user`,
