@@ -15,6 +15,7 @@ export interface createUser {
 }
 
 export interface updateUser {
+    id: string
     username?: string
     email?: string
     password?: string

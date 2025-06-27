@@ -19,3 +19,11 @@ privateApi.post(
     Jwt.allowedRole(roles.ADMIN),
     UserController.CreateUser
 )
+
+// Edit User
+privateApi.put(
+    `${globalEnv.PREFIX}/user`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    UserController.UpdateUserByAdmin
+)

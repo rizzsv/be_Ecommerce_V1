@@ -1,5 +1,5 @@
 import { Validator } from "../../utils/validator.utils";
-import { createUser, login } from "./user.model";
+import { createUser, login, updateUser } from "./user.model";
 import { userSchema } from "./user.schema";
 import prisma from '../../config/prisma.config'
 import loggerConfig from '../../config/logger.config'
@@ -23,7 +23,7 @@ export class UserService {
                 OR: [
                     {email: userRequest.identity},
                     {username: userRequest.identity},
-                    {phoneNum: userRequest.identity}
+                    {phoneNum: userRequest.identity},
                 ],
             },
         })
@@ -74,11 +74,13 @@ export class UserService {
             throw new ErrorHandler(409, 'Akun sudah terdaftar')
         }
 
+        const hashedPassword = await bcrypt.hash(userRequest.password, 10)
+
         const user = await prisma.user.create({
             data: {
                 username: userRequest.username,
                 email: userRequest.email,
-                password: userRequest.password,
+                password: hashedPassword,
                 phoneNum: userRequest.phoneNum,
                 role: userRequest.role || Role.USER,
             },
@@ -96,5 +98,66 @@ export class UserService {
                 phoneNum: user.phoneNum,
             }
         }
+    }
+
+    /** Update User */
+    static async updateUser(req: updateUser, role: Role) {
+        const ctx = 'Update User'
+        const scp = 'User'
+
+        const userRequest = Validator.Validate(userSchema.updateUser, req)
+
+        const existing = await prisma.user.findUnique({
+            where: {
+                id: req.id
+            }
+        })
+
+        if (!existing) {
+            loggerConfig.error(ctx, 'User Not Found', scp)
+            throw new ErrorHandler(404, 'User Tidak Ditemukan')
+        }
+
+        const updateData = {
+            email: userRequest.email ?? existing.email,
+            username: userRequest.username ?? existing.username,
+            phoneNum: userRequest.phoneNum ?? existing.phoneNum
+        }
+
+        //cek duplicate account
+        const duplicate = await prisma.user.findFirst({
+            where: {
+                AND: [
+                    {id: {not: req.id}},
+                    {
+                        OR: [
+                            {email: updateData.email},
+                            {username: updateData.username}
+                        ]
+                    }
+                ]
+            }
+        })
+
+        if(duplicate){
+            const fields = []
+            if(duplicate.username === updateData.username) fields.push('Username')
+            if(duplicate.email === updateData.email) fields.push('Email')
+                
+            const message = `Duplicate found on: ${fields.join(', ')}`
+            loggerConfig.error(ctx, message, scp)
+            throw new ErrorHandler(400, message)
+        }
+
+        if(role !== Role.ADMIN && 'role' in req) {
+         throw new ErrorHandler(403, 'User tidak diizinkan mengubah role')
+        }
+
+        const updated = await prisma.user.update({
+            where: {id: req.id},
+            data: updateData
+        })
+
+        return{}
     }
 }
