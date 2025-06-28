@@ -11,16 +11,20 @@ import {
   userResponse,
 } from "./user.model";
 import { userSchema } from "./user.schema";
+import { Request } from 'express';
 import prisma from "../../config/prisma.config";
 import loggerConfig from "../../config/logger.config";
 import { ErrorHandler } from "../../config/custom.config";
 import bcrypt from "bcrypt";
 import { Jwt } from "../../helper/jwt.helper";
 import { Crypto } from "../../helper/crypto.helper";
+import * as crypto from "crypto";
 import { Role } from "@prisma/client";
+import jwt from "jsonwebtoken";
 import { MetaData } from "../../utils/type.utils";
 import { CreateSecureOtp } from "../../utils/createOtp";
 import { Nodemailer } from "../../helper/nodemailer/nodemailer.helper";
+import { globalEnv } from "../../utils/globalEnv.utils";
 
 export class UserService {
   /** Login User */
@@ -333,12 +337,12 @@ export class UserService {
 
     const otp = CreateSecureOtp();
     await prisma.otp.create({
-        data: {
-            email: isUserExist.email,
-            code: otp,
-            expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-        }
-    })
+      data: {
+        email: userRequest.email,
+        code: otp,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      },
+    });
 
     await Nodemailer.sendUserForgotPassword(isUserExist.email, otp);
 
@@ -346,59 +350,73 @@ export class UserService {
   }
 
   /** Confirm OTP */
-  static async confirmOtp(req: confirmOtp){
-    const ctx = 'Confirm OTP'
-    const scp = 'User'
+  static async confirmOtp(req: confirmOtp) {
+    const ctx = "Confirm OTP";
+    const scp = "User";
 
-    const userRequest = Validator.Validate(userSchema.Confirm_Otp, req)
+    const userRequest = Validator.Validate(userSchema.Confirm_Otp, req);
 
     const otpRecord = await prisma.otp.findFirst({
-        where: {
-            email: userRequest.email,
-            code: userRequest.otp,
-            expiresAt: {
-                gte: new Date()
-            }
-        }
-    })
+      where: {
+        code: userRequest.otp,
+        expiresAt: {
+          gte: new Date(),
+        },
+      },
+    });
 
-    if(!otpRecord){
-      loggerConfig.error(ctx, 'Invalid pr Expired OTP', scp)
-      throw new ErrorHandler(400, 'OTP tidak valid')
+    if (!otpRecord) {
+      loggerConfig.error(ctx, "Invalid pr Expired OTP", scp);
+      throw new ErrorHandler(400, "OTP tidak valid");
     }
 
-    loggerConfig.info(ctx, 'OTP verified successfully', scp)
-
-    // first make otp and delete!
     await prisma.otp.delete({
-        where: {id: otpRecord.id}
-    })
-    return
+      where: { id: otpRecord.id }
+    });
+
+    const token = jwt.sign(
+        {email: otpRecord.email},
+        globalEnv.JWT_SECRET!,
+        {expiresIn: "1h"}
+    )
+
+    loggerConfig.info(ctx, "OTP verified, reset token generated", scp);
+    return{
+        message: 'OTP berhasil diverifikasi',
+        token
+    }
   }
 
   /** change password */
-  static async changePassword(req: changePasswordUser): Promise<void> {
-    const ctx = 'Change Password'
-    const scp = 'User'
+  static async changePassword(password: string, token: string): Promise<void> {
+  const ctx = "Change Password";
+  const scp = "User";
 
-    const userRequest = Validator.Validate(userSchema.Change_Password, req)
-
-    const user = await prisma.user.findUnique({
-        where: {email: userRequest.email}
-    })
-
-    if(!user){
-        loggerConfig.error(ctx, 'User not found', scp)
-        throw new ErrorHandler(404, 'User Tidak Ditemukan')
-    }
-
-    //update
-    await prisma.user.update({
-        where: {email: userRequest.email},
-        data: {
-            password: await bcrypt.hash(userRequest.password, 10)
-        }
-    })
-    loggerConfig.info(ctx, 'Succes change password', scp)
+  let payload: any;
+  try {
+    payload = jwt.verify(token, globalEnv.JWT_SECRET!);
+  } catch (err) {
+    loggerConfig.error(ctx, "Invalid or expired token", scp);
+    throw new ErrorHandler(401, "Token tidak valid atau telah kedaluwarsa");
   }
+
+  const user = await prisma.user.findUnique({
+    where: { email: payload.email },
+  });
+
+  if (!user) {
+    loggerConfig.error(ctx, "User not found", scp);
+    throw new ErrorHandler(404, "User tidak ditemukan");
+  }
+
+  await prisma.user.update({
+    where: { email: payload.email },
+    data: {
+      password: await bcrypt.hash(password, 10),
+    },
+  });
+
+  loggerConfig.info(ctx, "Success change password", scp);
+}
+
 }

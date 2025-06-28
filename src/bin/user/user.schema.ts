@@ -180,12 +180,10 @@ export class userSchema {
   });
 
   static readonly Confirm_Otp = Joi.object({
-    email: Joi.string().email().required(),
     otp: Joi.string().length(6).required(),
   });
 
   static readonly Change_Password = Joi.object({
-    email: Joi.string().email().required(),
     password: Joi.string()
       .min(8)
       .pattern(/^(?=.*[A-Z])(?=.*[*\-#]).*$/)

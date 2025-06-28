@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { CustomRequest } from "../../config/custom.config";
+import { CustomRequest, ErrorHandler } from "../../config/custom.config";
 import { changePasswordUser, confirmOtp, createUser, getUser, login, requestOtp, updateUser } from "./user.model";
 import LoggerService from "../../config/logger.config";
 import { UserService } from "./user.service";
@@ -131,16 +131,30 @@ export class UserController {
         }
     }
 
-    static async ChangePassword(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const request: changePasswordUser = req.body as changePasswordUser
+static async ChangePassword(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+  try {
+    await logRequest(req, `PUT /user/change-password`);
 
-            await logRequest(req, `PUT /user/change-password`)
+    const authHeader = req.headers.authorization;
 
-            const response = await UserService.changePassword(request)
-            Wrapper.success(res, true, response, 'Success change password', 200)
-        } catch (error) {
-            next(error)
-        }
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new ErrorHandler(401, "Authorization header missing or invalid");
     }
+
+    const token = authHeader.split(" ")[1];
+
+    const { password } = req.body;
+
+    if (!password) {
+      throw new ErrorHandler(400, "Password is required");
+    }
+
+    const response = await UserService.changePassword(password, token);
+
+    Wrapper.success(res, true, response, "Success change password", 200);
+  } catch (error) {
+    next(error);
+  }
+}
+
 }

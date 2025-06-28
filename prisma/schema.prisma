@@ -132,10 +132,11 @@ model LogExternal {
 
 model Otp {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  email     String
   code      String
+  email     String
   expiresAt DateTime
   createdAt DateTime @default(now())
+  verified  Boolean  @default(false)
 }
 
 enum Role {
