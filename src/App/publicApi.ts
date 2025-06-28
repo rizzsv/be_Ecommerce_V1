@@ -37,6 +37,5 @@ publicApi.put(
 // change password
 publicApi.put(
     `${globalEnv.PREFIX}/user/change-password`,
-    Jwt.jwtValidator,
     UserController.ChangePassword
 )
