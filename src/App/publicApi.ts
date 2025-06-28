@@ -27,8 +27,16 @@ publicApi.post(
 
 /** api for user */
 
+// edit profile
 publicApi.put(
     `${globalEnv.PREFIX}/user`,
     Jwt.jwtValidator,
     UserController.UpdateUserByUser
+)
+
+// change password
+publicApi.put(
+    `${globalEnv.PREFIX}/user/change-password`,
+    Jwt.jwtValidator,
+    UserController.ChangePassword
 )

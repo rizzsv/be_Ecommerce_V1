@@ -183,4 +183,17 @@ export class userSchema {
     email: Joi.string().email().required(),
     otp: Joi.string().length(6).required(),
   });
+
+  static readonly Change_Password = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string()
+      .min(8)
+      .pattern(/^(?=.*[A-Z])(?=.*[*\-#]).*$/)
+      .required()
+      .messages({
+        "string.min": "Password minimal 8 karakter",
+        "string.pattern.base":
+          "Password harus memiliki huruf kapital dan simbol (*, -, atau #)",
+      }),
+  });
 }

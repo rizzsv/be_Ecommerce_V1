@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { CustomRequest } from "../../config/custom.config";
-import { confirmOtp, createUser, getUser, login, requestOtp, updateUser } from "./user.model";
+import { changePasswordUser, confirmOtp, createUser, getUser, login, requestOtp, updateUser } from "./user.model";
 import LoggerService from "../../config/logger.config";
 import { UserService } from "./user.service";
 import { Wrapper } from "../../utils/wrapper.utils";
@@ -126,6 +126,19 @@ export class UserController {
 
             const response = await UserService.confirmOtp(request)
             Wrapper.success(res, true, response, 'Success confirm otp', 200)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async ChangePassword(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const request: changePasswordUser = req.body as changePasswordUser
+
+            await logRequest(req, `PUT /user/change-password`)
+
+            const response = await UserService.changePassword(request)
+            Wrapper.success(res, true, response, 'Success change password', 200)
         } catch (error) {
             next(error)
         }

@@ -1,13 +1,14 @@
 import { Validator } from "../../utils/validator.utils";
 import {
-    confirmOtp,
+  changePasswordUser,
+  confirmOtp,
   createUser,
   getUser,
   login,
   requestOtp,
   toUserResponse,
   updateUser,
-  UserResponse,
+  userResponse,
 } from "./user.model";
 import { userSchema } from "./user.schema";
 import prisma from "../../config/prisma.config";
@@ -251,7 +252,7 @@ export class UserService {
   }
 
   /** Get User By Id */
-  static async GetUserById(req: string): Promise<UserResponse> {
+  static async GetUserById(req: string): Promise<userResponse> {
     const ctx = "Get User Id";
     const scp = "User";
 
@@ -275,6 +276,7 @@ export class UserService {
     return toUserResponse(isUserExist);
   }
 
+  /** Delete User */
   static async DeleteUser(req: string) {
     const ctx = "Delete User";
     const scp = "User";
@@ -309,6 +311,7 @@ export class UserService {
     return {};
   }
 
+  /** Request OTP */
   static async requestOtp(req: requestOtp) {
     const ctx = "Request Otp";
     const scp = "User";
@@ -342,6 +345,7 @@ export class UserService {
     return {};
   }
 
+  /** Confirm OTP */
   static async confirmOtp(req: confirmOtp){
     const ctx = 'Confirm OTP'
     const scp = 'User'
@@ -370,5 +374,31 @@ export class UserService {
         where: {id: otpRecord.id}
     })
     return
+  }
+
+  /** change password */
+  static async changePassword(req: changePasswordUser): Promise<void> {
+    const ctx = 'Change Password'
+    const scp = 'User'
+
+    const userRequest = Validator.Validate(userSchema.Change_Password, req)
+
+    const user = await prisma.user.findUnique({
+        where: {email: userRequest.email}
+    })
+
+    if(!user){
+        loggerConfig.error(ctx, 'User not found', scp)
+        throw new ErrorHandler(404, 'User Tidak Ditemukan')
+    }
+
+    //update
+    await prisma.user.update({
+        where: {email: userRequest.email},
+        data: {
+            password: await bcrypt.hash(userRequest.password, 10)
+        }
+    })
+    loggerConfig.info(ctx, 'Succes change password', scp)
   }
 }

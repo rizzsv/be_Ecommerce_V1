@@ -30,7 +30,7 @@ export interface getUser {
     quantity: number
 }
 
-export interface UserResponse {
+export interface userResponse {
     id: string,
     username: string,
     email: string,
@@ -51,9 +51,9 @@ export interface confirmOtp {
     otp: string
 }
 
-export interface ChangePasswordUser {
-  oldPassword: string
-  newPassword: string
+export interface changePasswordUser {
+  email: string
+  password: string
 }
 
 export interface ChangePasswordAdmin {
@@ -61,7 +61,7 @@ export interface ChangePasswordAdmin {
   newPassword: string
 }
 
-export function toUserResponse(user: User): UserResponse {
+export function toUserResponse(user: User): userResponse {
     return {
         id: user.id,
         username: user.username,
