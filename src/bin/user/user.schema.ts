@@ -167,5 +167,25 @@ export class userSchema {
 
   static readonly Request_Otp = Joi.object({
     email: Joi.string().email(),
+        username: Joi.string()
+      .min(5)
+      .max(100)
+      .pattern(/^[a-z0-9._-]+$/)
+      .messages({
+        'string.min': 'Username minimal harus 5 karakter',
+        'string.max': 'Username terlalu panjang (maksimal 100 karakter)',
+        'string.pattern.base':
+          'Username hanya boleh huruf kecil, angka, titik, minus, atau underscore',
+      }),
+
+          phoneNum: Joi.string()
+  .pattern(/^(\+62|62|0)[0-9]{9,14}$/)
+  .required()
+  .messages({
+    'string.pattern.base': 'Phone number must start with 0, 62, or +62 and contain 10-15 digits',
+    'string.empty': 'Phone number is required',
+    'any.required': 'Phone number is required',
+  }),
+
   })
 }
