@@ -1,5 +1,6 @@
 import { Validator } from "../../utils/validator.utils";
 import {
+    confirmOtp,
   createUser,
   getUser,
   login,
@@ -328,9 +329,46 @@ export class UserService {
     }
 
     const otp = CreateSecureOtp();
+    await prisma.otp.create({
+        data: {
+            email: isUserExist.email,
+            code: otp,
+            expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        }
+    })
 
     await Nodemailer.sendUserForgotPassword(isUserExist.email, otp);
 
     return {};
+  }
+
+  static async confirmOtp(req: confirmOtp){
+    const ctx = 'Confirm OTP'
+    const scp = 'User'
+
+    const userRequest = Validator.Validate(userSchema.Confirm_Otp, req)
+
+    const otpRecord = await prisma.otp.findFirst({
+        where: {
+            email: userRequest.email,
+            code: userRequest.otp,
+            expiresAt: {
+                gte: new Date()
+            }
+        }
+    })
+
+    if(!otpRecord){
+      loggerConfig.error(ctx, 'Invalid pr Expired OTP', scp)
+      throw new ErrorHandler(400, 'OTP tidak valid')
+    }
+
+    loggerConfig.info(ctx, 'OTP verified successfully', scp)
+
+    // first make otp and delete!
+    await prisma.otp.delete({
+        where: {id: otpRecord.id}
+    })
+    return
   }
 }

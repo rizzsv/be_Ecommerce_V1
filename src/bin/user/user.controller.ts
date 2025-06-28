@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { CustomRequest } from "../../config/custom.config";
-import { createUser, getUser, login, requestOtp, updateUser } from "./user.model";
+import { confirmOtp, createUser, getUser, login, requestOtp, updateUser } from "./user.model";
 import LoggerService from "../../config/logger.config";
 import { UserService } from "./user.service";
 import { Wrapper } from "../../utils/wrapper.utils";
@@ -113,6 +113,19 @@ export class UserController {
 
             const response = await UserService.requestOtp(request)
             Wrapper.success(res, true, response, 'Success send otp', 200)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async ConfirmOtp(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const request: confirmOtp = req.body as confirmOtp
+
+            await logRequest(req, `POST /user/otp/confirm`)
+
+            const response = await UserService.confirmOtp(request)
+            Wrapper.success(res, true, response, 'Success confirm otp', 200)
         } catch (error) {
             next(error)
         }

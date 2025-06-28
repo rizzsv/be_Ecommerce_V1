@@ -5,16 +5,24 @@ import { Jwt } from '../helper/jwt.helper'
 
 export const publicApi = express.Router()
 
-//login
+/** Login */
 publicApi.post(`${globalEnv.PREFIX}/login`, UserController.Login)
 
-//regist
+/** Register */
 publicApi.post(`${globalEnv.PREFIX}/regist`, UserController.CreateUser)
 
 /** Api Forget Password */
+
+// request otp
 publicApi.post(
     `${globalEnv.PREFIX}/user/otp`,
     UserController.RequestOtp
+)
+
+// confirm otp
+publicApi.post(
+    `${globalEnv.PREFIX}/user/otp/confirm`,
+    UserController.ConfirmOtp
 )
 
 /** api for user */
