@@ -12,7 +12,22 @@ export class ProductService {
     userId: string,
     images: string[]
   ) {
+    const ctx = "Create Product"
+    const scp = "Product"
     const userRequest = Validator.Validate(productSchema.CreateProduct, req);
+
+    const isProductExist = await prisma.product.count({
+      where: {
+        OR: [
+          {name: userRequest.name},
+        ]
+      },
+    });
+
+    if(isProductExist !== 0) {
+      loggerConfig.error(ctx, 'Product already regist')
+      throw new ErrorHandler(409, "Product sudah terdaftar")
+    }
 
     const create = await prisma.product.create({
       data: {
@@ -43,6 +58,8 @@ export class ProductService {
       },
     });
 
+    loggerConfig.info(ctx, `Product created successfully`, scp)
+
     return create;
   }
 
@@ -60,7 +77,7 @@ export class ProductService {
 
     if (!isProductExist) {
       loggerConfig.error(ctx, "Product not found", scp);
-      throw new ErrorHandler(404, "Berita tidak ditemukan");
+      throw new ErrorHandler(404, "Product tidak ditemukan");
     }
 
     userRequest.category ??= isProductExist.category_id;

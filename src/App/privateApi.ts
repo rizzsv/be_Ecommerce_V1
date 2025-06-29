@@ -6,6 +6,7 @@ import { UserController } from '../bin/user/user.controller'
 import { ProductController } from '../bin/product/product.controller'
 
 import  upload  from '../helper/upload.helper'
+import { categoryController } from '../bin/category/category.controller'
 
 export const privateApi = express.Router()
 
@@ -55,6 +56,14 @@ privateApi.delete(
     Jwt.jwtValidator,
     Jwt.allowedRole(roles.ADMIN),
     UserController.DeleteUser
+)
+
+/** Api Category */
+privateApi.post(
+   `${globalEnv.PREFIX}/category/create`,
+   Jwt.jwtValidator,
+   Jwt.allowedRole(roles.ADMIN),
+   categoryController.createCategory
 )
 
 /** Api Product */

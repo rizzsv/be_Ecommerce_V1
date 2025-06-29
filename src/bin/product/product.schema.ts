@@ -31,8 +31,7 @@ export class productSchema {
       "string.uri": "Format URL gambar tidak valid",
       "any.required": "Gambar wajib diisi",
     }),
-    category: Joi.string().length(24).required().messages({
-      "string.length": "ID kategori harus 24 karakter (ObjectId)",
+    category: Joi.string().required().messages({
       "any.required": "Kategori wajib diisi",
     }),
     variants: Joi.array()
@@ -52,7 +51,7 @@ export class productSchema {
     price: Joi.number().positive(),
     stock: Joi.number().integer().min(0),
     image: Joi.string().uri(),
-    category: Joi.string().length(24),
+    category: Joi.string().length(5),
   })
     .min(1)
     .messages({
@@ -67,7 +66,7 @@ export class productSchema {
   });
 
   static readonly DeleteProduct = Joi.object({
-    id: Joi.string().length(24).required().messages({
+    id: Joi.string().length(5).required().messages({
       "string.length": "ID produk harus 24 karakter (ObjectId)",
       "any.required": "ID produk wajib diisi",
     }),
