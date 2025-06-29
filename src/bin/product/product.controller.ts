@@ -37,7 +37,6 @@ export class ProductController {
 
       const response = await ProductService.createProduct(
         request,
-        req.user!.id,
         imageList
       );
       Wrapper.success(res, true, response, "Sukses membuat produk", 200);

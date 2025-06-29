@@ -9,7 +9,6 @@ import { removeFileIfExists } from "../../helper/delete.file.helper";
 export class ProductService {
   static async createProduct(
     req: createProduct,
-    userId: string,
     images: string[]
   ) {
     const ctx = "Create Product"

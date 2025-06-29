@@ -339,38 +339,38 @@ export class UserService {
   }
 
   /** Request OTP */
-  static async requestOtp(req: requestOtp) {
-    const ctx = "Request Otp";
-    const scp = "User";
+      static async requestOtp(req: requestOtp) {
+        const ctx = "Request Otp";
+        const scp = "User";
 
-    const userRequest = Validator.Validate(userSchema.Request_Otp, req);
+        const userRequest = Validator.Validate(userSchema.Request_Otp, req);
 
-    const isUserExist = await prisma.user.findUnique({
-      where: {
-        email: userRequest.email,
-        username: userRequest.username,
-        phoneNum: userRequest.phoneNum,
-      },
-    });
+        const isUserExist = await prisma.user.findUnique({
+          where: {
+            email: userRequest.email,
+            username: userRequest.username,
+            phoneNum: userRequest.phoneNum,
+          },
+        });
 
-    if (!isUserExist) {
-      loggerConfig.error(ctx, "User Not Found", scp);
-      throw new ErrorHandler(404, "User Tidak Ditemukan");
-    }
+        if (!isUserExist) {
+          loggerConfig.error(ctx, "User Not Found", scp);
+          throw new ErrorHandler(404, "User Tidak Ditemukan");
+        }
 
-    const otp = CreateSecureOtp();
-    await prisma.otp.create({
-      data: {
-        email: userRequest.email,
-        code: otp,
-        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-      },
-    });
+        const otp = CreateSecureOtp();
+        await prisma.otp.create({
+          data: {
+            email: userRequest.email,
+            code: otp,
+            expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+          },
+        });
 
-    await Nodemailer.sendUserForgotPassword(isUserExist.email, otp);
+        await Nodemailer.sendUserForgotPassword(isUserExist.email, otp);
 
-    return {};
-  }
+        return {};
+      }
 
   /** Confirm OTP */
   static async confirmOtp(req: confirmOtp) {
