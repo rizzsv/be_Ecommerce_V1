@@ -139,7 +139,7 @@ model Report {
 
 model Log {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String
+  userId    String    @db.ObjectId
   target    String
   request   String
   createdAt DateTime @default(now())
