@@ -42,6 +42,14 @@ privateApi.get(
     UserController.GetAllUser
 )
 
+// Get Profile User
+privateApi.get(
+    `${globalEnv.PREFIX}/user/profile`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN, roles.USER),
+    UserController.GetProfile
+)
+
 // Get User By Id
 privateApi.get(
     `${globalEnv.PREFIX}/user/:id`,

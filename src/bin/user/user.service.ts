@@ -280,6 +280,29 @@ export class UserService {
     return toUserResponse(isUserExist);
   }
 
+  /** Get Profile */
+  static async getProfile(req: string) {
+    const ctx = 'Get Profile'
+    const scp = 'User'
+
+    const userRequest = Validator.Validate(userSchema.Get_User_Profile, {id: req})
+
+    const isUserExist = await prisma.user.findFirst({
+      where: {
+        id: userRequest.id
+      },
+    })
+
+    if(!isUserExist) {
+      loggerConfig.error(ctx, 'User not found', scp)
+      throw new ErrorHandler(404, 'User tidak ditemukan')
+    }
+
+    loggerConfig.info(ctx, 'Succes Get Profile', scp)
+
+    return toUserResponse(isUserExist)
+  }
+
   /** Delete User */
   static async DeleteUser(req: string) {
     const ctx = "Delete User";
