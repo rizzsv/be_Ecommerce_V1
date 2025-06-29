@@ -79,13 +79,25 @@ export class UserController {
         }
     }
 
+    static async GetProfile(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            await logRequest(req, `GET /user/profile`)
+
+            const response = await UserService.getProfile(req.user!.id)
+            Wrapper.success(res, true, response, 'Succes Get User Profile', 200)
+        } catch (error) {
+            next(error)
+
+        }
+    }
+
     static async getUserById(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
         try {
             const request = req.params.id
 
             await logRequest(req, `GET /user/${request}`)
 
-            const response= await UserService.GetUserById(request)
+            const response = await UserService.GetUserById(request)
             Wrapper.success(res, true, response, 'Succes Get User', 200)
         } catch (error) {
             next(error)

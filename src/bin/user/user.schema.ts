@@ -151,6 +151,10 @@ export class userSchema {
     id: Joi.string().required(),
   });
 
+  static readonly Get_User_Profile = Joi.object({
+    id: Joi.string().optional()
+  })
+
   static readonly Delete_User = Joi.object({
     id: Joi.string().required(),
   });
