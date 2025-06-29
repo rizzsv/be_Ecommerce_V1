@@ -4,6 +4,7 @@ import cors from "cors"
 import { connectDb } from "./config/db";
 import { publicApi } from "./App/publicApi";
 import { privateApi } from "./App/privateApi";
+import {globalErrorHandler } from "./middleware/error.middleware"
 
 dotenv.config();
 const app = express();
@@ -27,6 +28,7 @@ app.use(publicApi)
 app.use(privateApi)
 
 // Apply Error Middleware
+app.use(globalErrorHandler)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🔥 BOOM! Server ignited on port ${PORT}. Let’s build something awesome!`));
