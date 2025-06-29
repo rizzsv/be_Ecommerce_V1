@@ -31,8 +31,6 @@ export class CategoryService {
 
         loggerConfig.info(ctx, 'Category created succes', scp);
 
-        return{
-            category
-        }
+        return{}
     }
 }
