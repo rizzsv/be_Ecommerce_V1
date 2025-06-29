@@ -18,16 +18,17 @@ model User {
   username      String
   email         String         @unique
   password      String
-  phoneNum      String?        @unique         
+  phoneNum      String?        @unique
   role          Role           @default(USER)
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   onDelete      Boolean        @default(false)
-  createdAt     DateTime   @default(now())
+  createdAt     DateTime       @default(now())
   orders        Order[]
   wishlist      Wishlist[]
   cartItems     CartItem[]
   notifications Notification[]
+  products      Product[]
   logs          Log[]          @relation("UserLogs")
 }
 
@@ -37,7 +38,8 @@ model Product {
   description String
   price       Float
   stock       Int
-  image_url   String
+  image       String      
+  userId      String      @db.ObjectId
   category_id String      @db.ObjectId
   created_at  DateTime    @default(now())
   updated_at  DateTime    @updatedAt
@@ -45,7 +47,29 @@ model Product {
   orderItems  OrderItem[]
   cartItems   CartItem[]
   wishlist    Wishlist[]
+  variants     ProductVariant[]   
+  images       ProductImage[] 
+  user        User        @relation(fields: [userId], references: [id])
 }
+
+model ProductVariant {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  size      String
+  color     String
+  stock     Int
+
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model ProductImage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  url       String
+
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
 
 model Category {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId

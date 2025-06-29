@@ -3,6 +3,9 @@ import express from 'express'
 import { globalEnv } from '../utils/globalEnv.utils'
 import { Jwt } from '../helper/jwt.helper'
 import { UserController } from '../bin/user/user.controller'
+import { ProductController } from '../bin/product/product.controller'
+
+import  upload  from '../helper/upload.helper'
 
 export const privateApi = express.Router()
 
@@ -52,4 +55,13 @@ privateApi.delete(
     Jwt.jwtValidator,
     Jwt.allowedRole(roles.ADMIN),
     UserController.DeleteUser
+)
+
+/** Api Product */
+privateApi.post(
+    `${globalEnv.PREFIX}/product/create`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    upload.array('image', 5),
+    ProductController.createProduct
 )
