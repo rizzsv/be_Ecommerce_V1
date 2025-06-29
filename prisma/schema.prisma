@@ -18,12 +18,12 @@ model User {
   username      String
   email         String         @unique
   password      String
-  phoneNum      String?        @unique         
+  phoneNum      String?        @unique
   role          Role           @default(USER)
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   onDelete      Boolean        @default(false)
-  createdAt     DateTime   @default(now())
+  createdAt     DateTime       @default(now())
   orders        Order[]
   wishlist      Wishlist[]
   cartItems     CartItem[]
@@ -32,19 +32,31 @@ model User {
 }
 
 model Product {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
   price       Float
   stock       Int
-  image_url   String
-  category_id String      @db.ObjectId
-  created_at  DateTime    @default(now())
-  updated_at  DateTime    @updatedAt
-  category    Category    @relation(fields: [category_id], references: [id])
+  image       String
+  category_id String           @db.ObjectId
+  created_at  DateTime         @default(now())
+  updated_at  DateTime         @updatedAt
+  category    Category         @relation(fields: [category_id], references: [id])
   orderItems  OrderItem[]
+  variants    ProductVariant[]
+  images      ProductImage[]
   cartItems   CartItem[]
   wishlist    Wishlist[]
+}
+
+model ProductVariant {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  productId String @db.ObjectId
+  size      String
+  color     String
+  stock     Int
+
+  product Product @relation(fields: [productId], references: [id])
 }
 
 model Category {
@@ -54,6 +66,14 @@ model Category {
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   products   Product[]
+}
+
+model ProductImage {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  productId String @db.ObjectId
+  url       String
+
+  product Product @relation(fields: [productId], references: [id])
 }
 
 model Order {

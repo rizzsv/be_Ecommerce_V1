@@ -31,7 +31,6 @@ export class ProductService {
 
     const create = await prisma.product.create({
       data: {
-        userId,
         name: userRequest.name,
         description: userRequest.description,
         price: userRequest.price,
@@ -48,13 +47,6 @@ export class ProductService {
       include: {
         images: true,
         variants: true,
-        user: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-          },
-        },
       },
     });
 
