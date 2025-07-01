@@ -66,14 +66,6 @@ privateApi.delete(
     UserController.DeleteUser
 )
 
-/** Api Category */
-privateApi.post(
-   `${globalEnv.PREFIX}/category/create`,
-   Jwt.jwtValidator,
-   Jwt.allowedRole(roles.ADMIN),
-   categoryController.createCategory
-)
-
 /** Api Product */
 
 // Create Product
@@ -118,5 +110,40 @@ privateApi.delete(
     Jwt.jwtValidator,
     Jwt.allowedRole(roles.ADMIN),
     ProductController.deleteProduct
+)
+
+/** Api Category */
+
+// create Category
+privateApi.post(
+   `${globalEnv.PREFIX}/category/create`,
+   Jwt.jwtValidator,
+   Jwt.allowedRole(roles.ADMIN),
+   categoryController.createCategory
+)
+
+// update Category
+privateApi.put(
+    `${globalEnv.PREFIX}/category/update`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    upload.none(),
+    categoryController.updateCategory
+)
+
+// get All Category
+privateApi.get(
+    `${globalEnv.PREFIX}/category`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    categoryController.getCategory
+)
+
+// delete Category
+privateApi.delete(
+    `${globalEnv.PREFIX}/category/:id`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    categoryController.deleteCategory
 )
 

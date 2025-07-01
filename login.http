@@ -1,0 +1,8 @@
+### Login 
+POST http://localhost:3000/E-Commerce/api/v1/login
+Content-Type: application/json
+
+{
+  "identity": "admin@example.com",
+  "password": "Eccomerce2025"
+}
