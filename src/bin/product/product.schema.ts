@@ -46,6 +46,7 @@ export class productSchema {
   });
 
   static readonly UpdateProduct = Joi.object({
+    id: Joi.string().length(24).required(),
     name: Joi.string().min(3).max(100),
     description: Joi.string().min(10),
     price: Joi.number().positive(),
@@ -59,23 +60,21 @@ export class productSchema {
     });
 
   static readonly GetByIdProduct = Joi.object({
-    id: Joi.string().length(24).required().messages({
+    id: Joi.string().required().messages({
       "string.length": "ID produk harus 24 karakter (ObjectId)",
       "any.required": "ID produk wajib diisi",
     }),
   });
 
   static readonly DeleteProduct = Joi.object({
-    id: Joi.string().length(5).required().messages({
-      "string.length": "ID produk harus 24 karakter (ObjectId)",
+    id: Joi.string().required().messages({
       "any.required": "ID produk wajib diisi",
     }),
   });
 
   static readonly GetAllProduct = Joi.object({
     search: Joi.string().allow("", null),
-    periode: Joi.number().integer().valid(1, 7, 30).required().messages({
-      "any.only": "Periode hanya bisa 1, 7, atau 30 hari",
+    periode: Joi.number().integer().required().messages({
       "any.required": "Periode wajib diisi",
     }),
     page: Joi.number().integer().min(1).required(),

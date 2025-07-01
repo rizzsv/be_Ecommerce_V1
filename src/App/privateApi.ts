@@ -75,6 +75,9 @@ privateApi.post(
 )
 
 /** Api Product */
+
+// Create Product
+
 privateApi.post(
     `${globalEnv.PREFIX}/product/create`,
     Jwt.jwtValidator,
@@ -82,3 +85,38 @@ privateApi.post(
     upload.array('image', 5),
     ProductController.createProduct
 )
+
+// Update Product
+
+privateApi.put(
+    `${globalEnv.PREFIX}/product/update`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    upload.array('image', 5),
+    ProductController.updateProduct
+)
+
+// Get All Product
+privateApi.get(
+    `${globalEnv.PREFIX}/product`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN, roles.USER),
+    ProductController.getAllProduct
+)
+
+// Get Product By Id
+privateApi.get(
+    `${globalEnv.PREFIX}/product/:id`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN, roles.USER),
+    ProductController.getProductById
+)
+
+// Delete Product
+privateApi.delete(
+    `${globalEnv.PREFIX}/product/:id`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    ProductController.deleteProduct
+)
+

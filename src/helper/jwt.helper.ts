@@ -23,7 +23,7 @@ export class Jwt {
       const token = authHeader.split(' ')[1]
       const decoded = jwt.verify(token, globalEnv.JWT_SECRET!) as JwtPayload
 
-      // Decode UUID jika kamu menyimpannya dalam bentuk terenkripsi
+      
       decoded.id = Crypto.decode(decoded.id)
 
       req.user = decoded
