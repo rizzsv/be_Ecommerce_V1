@@ -37,7 +37,9 @@ export class CategoryService {
 
     loggerConfig.info(ctx, "Category created succes", scp);
 
-    return {};
+    return {
+      id: category.id
+    };
   }
 
   static async updateCategory(req: updateCategory) {
