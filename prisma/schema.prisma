@@ -38,10 +38,10 @@ model Product {
   price       Float
   stock       Int
   image       String
-  category_id String?           @db.ObjectId
+  category_id String?          @db.ObjectId
   created_at  DateTime         @default(now())
   updated_at  DateTime         @updatedAt
-  category    Category?         @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  category    Category?        @relation(fields: [category_id], references: [id], onDelete: SetNull)
   orderItems  OrderItem[]
   variants    ProductVariant[]
   images      ProductImage[]
@@ -50,13 +50,13 @@ model Product {
 }
 
 model ProductVariant {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
   productId String? @db.ObjectId
   size      String
   color     String
   stock     Int
 
-  product Product? @relation(fields: [productId], references: [id],  onDelete: SetNull)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 }
 
 model Category {
@@ -79,10 +79,10 @@ model ProductImage {
 model Order {
   id               String      @id @default(auto()) @map("_id") @db.ObjectId
   user_id          String      @db.ObjectId
-  status           String
+  status           OrderStatus @default(PENDING)
   total_amount     Float
   shipping_address String
-  payment_method   String
+  payment_method   PaymentMethod
   created_at       DateTime    @default(now())
   updated_at       DateTime    @updatedAt
   user             User        @relation(fields: [user_id], references: [id])
@@ -162,4 +162,20 @@ model Otp {
 enum Role {
   ADMIN
   USER
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  BCA
+  MANDIRI
+  BRI
 }

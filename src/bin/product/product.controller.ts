@@ -90,7 +90,7 @@ export class ProductController {
       const response = await ProductService.getProductById({ id: request });
       Wrapper.success(res, true, response, "Sukses mendapatkan produk", 200);
     } catch (error) {
-      
+      next(error);
     }
   }
 

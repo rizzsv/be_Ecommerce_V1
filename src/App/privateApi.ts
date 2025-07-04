@@ -7,6 +7,7 @@ import { ProductController } from '../bin/product/product.controller'
 
 import  upload  from '../helper/upload.helper'
 import { categoryController } from '../bin/category/category.controller'
+import { OrderController } from '../bin/order/order.controller'
 
 export const privateApi = express.Router()
 
@@ -146,4 +147,38 @@ privateApi.delete(
     Jwt.allowedRole(roles.ADMIN),
     categoryController.deleteCategory
 )
+
+/** Api Order */
+// update Order Status
+privateApi.put(
+    `${globalEnv.PREFIX}/order/update-status`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    OrderController.updateOrderStatus
+)
+
+// getOrder By Id
+privateApi.get(
+    `${globalEnv.PREFIX}/order/:id`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    OrderController.getOrderById
+)
+
+// get All Orders
+privateApi.get(
+    `${globalEnv.PREFIX}/order`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    OrderController.getAllOrders
+)
+
+// delete Order
+privateApi.delete(
+    `${globalEnv.PREFIX}/order/:id`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    OrderController.deleteOrder
+)
+
 

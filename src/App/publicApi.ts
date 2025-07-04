@@ -2,6 +2,7 @@ import express from 'express'
 import { globalEnv } from '../utils/globalEnv.utils'
 import { UserController } from '../bin/user/user.controller'
 import { Jwt } from '../helper/jwt.helper'
+import { OrderController } from '../bin/order/order.controller'
 
 export const publicApi = express.Router()
 
@@ -38,4 +39,11 @@ publicApi.put(
 publicApi.put(
     `${globalEnv.PREFIX}/user/change-password`,
     UserController.ChangePassword
+)
+
+/** Api for user order */
+publicApi.post(
+    `${globalEnv.PREFIX}/order`,
+    Jwt.jwtValidator,
+    OrderController.createOrder
 )
