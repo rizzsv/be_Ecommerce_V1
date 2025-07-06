@@ -84,4 +84,21 @@ export class categoryController {
       next(error);
     }
   }
+
+  static async getCategoryBySlug(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const request = req.params.slug;
+
+      await logRequest(req, `GET /category/slug/${request}`);
+
+      const response = await CategoryService.getCategoryBySlug({ slug: request });
+      Wrapper.success(res, true, response, "Sukses mendapatkan Slug", 200);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

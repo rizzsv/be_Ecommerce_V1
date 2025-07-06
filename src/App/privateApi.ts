@@ -182,3 +182,12 @@ privateApi.delete(
 )
 
 
+
+// get Category By Slug
+privateApi.get(
+    `${globalEnv.PREFIX}/category/:slug`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN),
+    categoryController.getCategoryBySlug
+)
+

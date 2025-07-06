@@ -3,6 +3,6 @@ POST http://localhost:3000/E-Commerce/api/v1/login
 Content-Type: application/json
 
 {
-  "identity": "okeokeoke@gmail.com",
-  "password": "AdminValeantFasco"
+  "identity": "admin2@gmail.com",
+  "password": "ADMIN123"
 }
