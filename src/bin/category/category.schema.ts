@@ -24,4 +24,8 @@ export class categorySchema {
     page: Joi.number().integer().min(1).required(),
     quantity: Joi.number().integer().min(1).max(100).required(),
   });
+
+  static readonly GetCategoryBySlug = Joi.object({
+    slug: Joi.string().min(3).required(),
+  });
 }

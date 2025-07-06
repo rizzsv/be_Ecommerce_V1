@@ -19,3 +19,7 @@ export interface getCategory {
 export interface deleteCategory {
     id: string;
 }
+
+export interface getCategoryBySlug {
+    slug: string;
+}

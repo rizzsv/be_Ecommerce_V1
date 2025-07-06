@@ -7,6 +7,7 @@ import {
   createCategory,
   deleteCategory,
   getCategory,
+  getCategoryBySlug,
   updateCategory,
 } from "./category.model";
 import { getProductById } from "../product/product.model";
@@ -163,5 +164,29 @@ export class CategoryService {
       })),
       metaData,
     };
+  }
+
+  static async getCategoryBySlug(req: getCategoryBySlug){
+    const ctx = "Get Category By Slug";
+    const scp = 'Category';
+
+    const userRequest = Validator.Validate(
+      categorySchema.GetCategoryBySlug, req
+    );
+
+    const isCategoryExist = await prisma.category.findFirst({
+      where: {
+        slug: userRequest.slug,
+      },
+    });
+
+    if (!isCategoryExist) {
+      loggerConfig.error(ctx, "Slug not found", scp);
+      throw new ErrorHandler(404, "Slug tidak ditemukan");
+    }
+
+    return {
+      slug: isCategoryExist.slug
+    }
   }
 }
