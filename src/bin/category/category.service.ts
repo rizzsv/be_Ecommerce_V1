@@ -7,6 +7,7 @@ import {
   createCategory,
   deleteCategory,
   getCategory,
+  getCategoryById,
   getCategoryBySlug,
   updateCategory,
 } from "./category.model";
@@ -101,6 +102,43 @@ export class CategoryService {
     return {};
   }
 
+  static async getCategoryById(req: getCategoryById) {
+    const ctx = "Get Category By Id";
+    const scp = "Category";
+
+    const userRequest = Validator.Validate(
+      categorySchema.GetCategoryById,
+      req
+    );
+
+    const isCategoryExist = await prisma.category.findFirst({
+      where: {
+        id: userRequest.id,
+      },
+      include: {
+        products: true, 
+      },
+    });
+
+    if (!isCategoryExist) {
+      loggerConfig.error(ctx, "Category not found", scp);
+      throw new ErrorHandler(404, "Category tidak ditemukan");
+    }
+
+    return {
+      id: isCategoryExist.id,
+      name: isCategoryExist.name,
+      slug: isCategoryExist.slug,
+      createdAt: isCategoryExist.created_at,
+      products: isCategoryExist.products.map((product) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        createdAt: product.created_at,
+      })),
+    };
+  }
+
 
   static async getAllCategory(req: getCategory) {
     const ctx = "Get All Category";
@@ -184,6 +222,8 @@ export class CategoryService {
       loggerConfig.error(ctx, "Slug not found", scp);
       throw new ErrorHandler(404, "Slug tidak ditemukan");
     }
+
+    loggerConfig.info(ctx, "Success get category by slug", scp);
 
     return {
       slug: isCategoryExist.slug

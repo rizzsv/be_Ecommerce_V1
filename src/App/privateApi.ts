@@ -135,8 +135,16 @@ privateApi.put(
 privateApi.get(
     `${globalEnv.PREFIX}/category`,
     Jwt.jwtValidator,
-    Jwt.allowedRole(roles.ADMIN),
+    Jwt.allowedRole(roles.ADMIN, roles.USER),
     categoryController.getCategory
+)
+
+// get Category By Id
+privateApi.get(
+    `${globalEnv.PREFIX}/category/:id`,
+    Jwt.jwtValidator,
+    Jwt.allowedRole(roles.ADMIN, roles.USER),
+    categoryController.getCategoryById
 )
 
 // delete Category
@@ -149,7 +157,7 @@ privateApi.delete(
 
 // get Category By Slug
 privateApi.get(
-    `${globalEnv.PREFIX}/category/:slug`,
+    `${globalEnv.PREFIX}/category/slug/:slug`,
     Jwt.jwtValidator,
     Jwt.allowedRole(roles.ADMIN),
     categoryController.getCategoryBySlug
