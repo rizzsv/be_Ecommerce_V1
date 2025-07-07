@@ -16,6 +16,7 @@ export interface updateProduct {
   stock?: number;
   image?: string;
   category?: string;
+  category_id?: string;
   variants?: VariantInput[]
 }
 
@@ -28,6 +29,7 @@ export interface getProduct {
   periode: number;
   page: number;
   quantity: number;
+  category?: string;
 }
 
 export interface deleteProduct {

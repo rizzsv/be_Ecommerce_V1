@@ -68,6 +68,23 @@ export class categoryController {
     }
   }
 
+  static async getCategoryById(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const request = req.params.id;
+
+      await logRequest(req, `GET /category/${request}`);
+
+      const response = await CategoryService.getCategoryById({ id: request });
+      Wrapper.success(res, true, response, "Sukses mendapatkan category", 200);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async deleteCategory(
     req: CustomRequest,
     res: Response,

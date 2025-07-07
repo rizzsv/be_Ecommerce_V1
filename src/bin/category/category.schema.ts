@@ -25,7 +25,11 @@ export class categorySchema {
     quantity: Joi.number().integer().min(1).max(100).required(),
   });
 
+  static readonly GetCategoryById = Joi.object({
+    id: Joi.string().length(24).required(),
+  });
+
   static readonly GetCategoryBySlug = Joi.object({
-    slug: Joi.string().min(3).required(),
+    slug: Joi.string().required(),
   });
 }
