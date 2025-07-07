@@ -72,7 +72,7 @@ export class ProductService {
       throw new ErrorHandler(404, "Product tidak ditemukan");
     }
 
-    userRequest.category ??= isProductExist.category_id;
+    userRequest.category_id ??= isProductExist.category_id;
     userRequest.description ??= isProductExist.description;
     userRequest.price ??= isProductExist.price;
     userRequest.stock ??= isProductExist.stock;
@@ -84,7 +84,7 @@ export class ProductService {
         id: userRequest.id,
       },
       data: {
-        category_id: userRequest.category,
+        category_id: userRequest.category_id,
         description: userRequest.description,
         price: userRequest.price,
         stock: userRequest.stock,
@@ -141,6 +141,9 @@ export class ProductService {
       where: {
         id: userRequest.id,
       },
+      include: {
+        category: true,
+      }
     });
 
     if (!isProductExist) {
@@ -154,7 +157,8 @@ export class ProductService {
       description: isProductExist.description,
       price: isProductExist.price,
       image: isProductExist.image,
-      category: isProductExist.category_id,
+      categoryId: isProductExist.category_id,
+      categoryName: isProductExist.category?.name,
       createdAt: isProductExist.created_at,
     };
   }
@@ -185,10 +189,14 @@ export class ProductService {
         },
         skip: (userRequest.page - 1) * userRequest.quantity,
         take: userRequest.quantity,
+        include: {
+          category: true
+        }
       }),
       prisma.product.count({
-        where: filter
+        where: filter,
       }),
+      
     ])
 
     if(result.length === 0) {
@@ -212,7 +220,8 @@ export class ProductService {
         description: item.description,
         price: item.price,
         image: item.image,
-        category: item.category_id,
+        categoryId: item.category_id,
+        categoryName: item.category?.name,
         createdAt: item.created_at
       })),
       metaData,

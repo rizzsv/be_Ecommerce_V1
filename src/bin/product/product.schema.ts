@@ -52,6 +52,9 @@ export class productSchema {
     price: Joi.number().positive(),
     stock: Joi.number().integer().min(0),
     image: Joi.string().uri(),
+    category_id: Joi.string().required().messages({
+      "any.required": "Kategori wajib diisi",
+    }),
     category: Joi.string().length(5),
   })
     .min(1)
