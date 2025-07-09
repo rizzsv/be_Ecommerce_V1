@@ -24,7 +24,7 @@ export class ProductController {
         description: req.body.description,
         price: Number(req.body.price),
         stock: Number(req.body.stock),
-        image: `product/${(req.files as Express.Multer.File[])[0].filename}`, // thumbnail
+        image: (req.files as Express.Multer.File[])[0].filename, // thumbnail
         category: req.body.category,
         variants: JSON.parse(req.body.variants),
       };
@@ -32,13 +32,10 @@ export class ProductController {
       await logRequest(req, `POST /product/create` + JSON.stringify(request));
 
       const imageList = (req.files as Express.Multer.File[]).map(
-        (file) => `product/${file.filename}`
+        (file) => file.filename
       );
 
-      const response = await ProductService.createProduct(
-        request,
-        imageList
-      );
+      const response = await ProductService.createProduct(request, imageList);
       Wrapper.success(res, true, response, "Sukses membuat produk", 200);
     } catch (e) {
       if (req.files) {
@@ -50,21 +47,30 @@ export class ProductController {
     }
   }
 
-  static async updateProduct(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+  static async updateProduct(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const request: updateProduct = req.body as updateProduct;
 
-      await logRequest(req, `PUT /product/update ${JSON.stringify(request)}`)
+      await logRequest(req, `PUT /product/update ${JSON.stringify(request)}`);
 
-      const response = await ProductService.updateProduct(request)
-      Wrapper.success(res, true, response, 'Succes update product', 200)
+      const response = await ProductService.updateProduct(request);
+      Wrapper.success(res, true, response, "Succes update product", 200);
     } catch (error) {
-      if(req.body.originalname) removeFileIfExists(`product/${req.body.originalname}`)
-      next(error)
+      if (req.body.originalname)
+        removeFileIfExists(`product/${req.body.originalname}`);
+      next(error);
     }
   }
 
-    static async getAllProduct(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+  static async getAllProduct(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const request: getProduct = req.query as unknown as getProduct;
 
@@ -75,13 +81,24 @@ export class ProductController {
       await logRequest(req, `GET /product/` + JSON.stringify(request));
 
       const response = await ProductService.getProductAll(request);
-      Wrapper.pagination(res, true, response.metaData, 'Succes Get Product', response.data, 200);
+      Wrapper.pagination(
+        res,
+        true,
+        response.metaData,
+        "Succes Get Product",
+        response.data,
+        200
+      );
     } catch (error) {
       next(error);
     }
   }
 
-  static async getProductById(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+  static async getProductById(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const request = req.params.id;
 
@@ -94,14 +111,17 @@ export class ProductController {
     }
   }
 
-
-  static async deleteProduct(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+  static async deleteProduct(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
-      const request = req.params.id
+      const request = req.params.id;
 
       await logRequest(req, `DELETE /product/delete/${request}`);
 
-      const response = await ProductService.deleteProduct({id: request});
+      const response = await ProductService.deleteProduct({ id: request });
       Wrapper.success(res, true, response, "Sukses menghapus produk", 200);
     } catch (error) {
       next(error);

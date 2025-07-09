@@ -4,6 +4,7 @@ import cors from "cors"
 import { connectDb } from "./config/db";
 import { publicApi } from "./App/publicApi";
 import { privateApi } from "./App/privateApi";
+import path from "path";
 import {globalErrorHandler } from "./middleware/error.middleware"
 
 dotenv.config();
@@ -20,6 +21,8 @@ app.use(cors({
 app.get("/", (_, res) => {
   res.send("API Running");
 });
+
+app.use("/product", express.static(path.resolve("public/product")));
 
 // Apply public Api Router
 app.use(publicApi)
