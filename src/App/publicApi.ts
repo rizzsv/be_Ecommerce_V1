@@ -3,6 +3,7 @@ import { globalEnv } from '../utils/globalEnv.utils'
 import { UserController } from '../bin/user/user.controller'
 import { Jwt } from '../helper/jwt.helper'
 import { OrderController } from '../bin/order/order.controller'
+import { CartController } from '../bin/Cart/cart.controller'
 
 export const publicApi = express.Router()
 
@@ -46,4 +47,31 @@ publicApi.post(
     `${globalEnv.PREFIX}/order`,
     Jwt.jwtValidator,
     OrderController.createOrder
+)
+
+/** Api for cart */
+publicApi.post(
+    `${globalEnv.PREFIX}/cart`,
+    Jwt.jwtValidator,
+    CartController.createCart
+)
+
+
+publicApi.put(
+    `${globalEnv.PREFIX}/cart`,
+    Jwt.jwtValidator,
+    CartController.updateCart
+)
+
+
+publicApi.get(
+    `${globalEnv.PREFIX}/cart`,
+    Jwt.jwtValidator,
+    CartController.getCart
+)
+
+publicApi.delete(
+    `${globalEnv.PREFIX}/cart/:id`,
+    Jwt.jwtValidator,
+    CartController.deleteCart
 )

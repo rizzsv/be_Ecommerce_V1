@@ -11,7 +11,6 @@ import {
   getCategoryBySlug,
   updateCategory,
 } from "./category.model";
-import { getProductById } from "../product/product.model";
 
 export class CategoryService {
   static async createCategory(req: createCategory) {
