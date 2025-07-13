@@ -116,6 +116,7 @@ model Wishlist {
   product_id String  @db.ObjectId
   user       User    @relation(fields: [user_id], references: [id])
   product    Product @relation(fields: [product_id], references: [id])
+  created_at DateTime @default(now())
 }
 
 model Notification {

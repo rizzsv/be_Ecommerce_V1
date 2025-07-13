@@ -4,6 +4,7 @@ import { UserController } from '../bin/user/user.controller'
 import { Jwt } from '../helper/jwt.helper'
 import { OrderController } from '../bin/order/order.controller'
 import { CartController } from '../bin/Cart/cart.controller'
+import { wishlistController } from '../bin/wishlist/wishlist.controller'
 
 export const publicApi = express.Router()
 
@@ -74,4 +75,23 @@ publicApi.delete(
     `${globalEnv.PREFIX}/cart/:id`,
     Jwt.jwtValidator,
     CartController.deleteCart
+)
+
+/** Api for wishlist */
+publicApi.post(
+    `${globalEnv.PREFIX}/wishlist/create`,
+    Jwt.jwtValidator,
+    wishlistController.createWishlist
+)
+
+publicApi.get(
+    `${globalEnv.PREFIX}/wishlist`,
+    Jwt.jwtValidator,
+    wishlistController.getWishList
+)
+
+publicApi.delete(
+    `${globalEnv.PREFIX}/wishlist/delete/:id`,
+    Jwt.jwtValidator,
+    wishlistController.deleteWishlist
 )

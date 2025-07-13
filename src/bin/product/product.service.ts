@@ -77,7 +77,7 @@ export class ProductService {
     userRequest.price ??= isProductExist.price;
     userRequest.stock ??= isProductExist.stock;
     userRequest.image ??= isProductExist.image;
-    userRequest.name ??= isProductExist.name;
+    userRequest.name ??= isProductExist.name; 
 
     await prisma.product.update({
       where: {
@@ -143,6 +143,8 @@ export class ProductService {
       },
       include: {
         category: true,
+        variants: true,
+        images: true,
       }
     });
 
@@ -159,6 +161,8 @@ export class ProductService {
       image: isProductExist.image,
       categoryId: isProductExist.category_id,
       categoryName: isProductExist.category?.name,
+      variants: isProductExist.variants,
+      images: isProductExist.images.map((img) => img.url),
       createdAt: isProductExist.created_at,
     };
   }
@@ -190,7 +194,9 @@ export class ProductService {
         skip: (userRequest.page - 1) * userRequest.quantity,
         take: userRequest.quantity,
         include: {
-          category: true
+          category: true,
+          variants: true,
+          images: true,
         }
       }),
       prisma.product.count({
@@ -222,6 +228,8 @@ export class ProductService {
         image: item.image,
         categoryId: item.category_id,
         categoryName: item.category?.name,
+        variants: item.variants,
+        images: item.images.map((img) => img.url),
         createdAt: item.created_at
       })),
       metaData,
