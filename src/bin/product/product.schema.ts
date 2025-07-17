@@ -46,21 +46,28 @@ export class productSchema {
   });
 
   static readonly UpdateProduct = Joi.object({
-    id: Joi.string().length(24).required(),
-    name: Joi.string().min(3).max(100),
-    description: Joi.string().min(10),
-    price: Joi.number().positive(),
-    stock: Joi.number().integer().min(0),
-    image: Joi.string().uri(),
-    category_id: Joi.string().required().messages({
-      "any.required": "Kategori wajib diisi",
-    }),
-    category: Joi.string().length(5),
-  })
-    .min(1)
-    .messages({
-      "object.min": "Setidaknya satu field harus diubah",
-    });
+  id: Joi.string().length(24).required(),
+  name: Joi.string().min(3).max(100),
+  description: Joi.string().min(10),
+  price: Joi.number().positive(),
+  stock: Joi.number().integer().min(0),
+  image: Joi.string().uri(),
+  category_id: Joi.string().required().messages({
+    "any.required": "Kategori wajib diisi",
+  }),
+  category: Joi.string().length(5),
+  variants: Joi.array().items(
+    Joi.object({
+    size: Joi.string().required(),
+    color: Joi.string().required(),
+    stock: Joi.number().integer().required()
+    })
+  ),
+})
+  .min(1)
+  .messages({
+    "object.min": "Setidaknya satu field harus diubah",
+  });
 
   static readonly GetByIdProduct = Joi.object({
     id: Joi.string().required().messages({

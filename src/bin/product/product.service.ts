@@ -6,6 +6,7 @@ import {
   getProduct,
   getProductById,
   updateProduct,
+  VariantInput,
 } from "./product.model";
 import { productSchema } from "./product.schema";
 import loggerConfig from "../../config/logger.config";
@@ -62,9 +63,8 @@ export class ProductService {
     const userRequest = Validator.Validate(productSchema.UpdateProduct, req);
 
     const isProductExist = await prisma.product.findFirst({
-      where: {
-        id: userRequest.id,
-      },
+      where: { id: userRequest.id },
+      include: { variants: true },
     });
 
     if (!isProductExist) {
@@ -77,24 +77,35 @@ export class ProductService {
     userRequest.price ??= isProductExist.price;
     userRequest.stock ??= isProductExist.stock;
     userRequest.image ??= isProductExist.image;
-    userRequest.name ??= isProductExist.name; 
+    userRequest.name ??= isProductExist.name;
 
     await prisma.product.update({
-      where: {
-        id: userRequest.id,
-      },
+      where: { id: userRequest.id },
       data: {
-        category_id: userRequest.category_id,
+        name: userRequest.name,
         description: userRequest.description,
         price: userRequest.price,
         stock: userRequest.stock,
         image: userRequest.image,
-        name: userRequest.name,
+        category_id: userRequest.category_id,
+
+        variants: userRequest.variants
+          ? {
+            deleteMany: {}, // Hapus semua variant lama
+            create: userRequest.variants.map((variant: VariantInput) => ({
+              color: variant.color,
+              size: variant.size,
+              stock: variant.stock,
+            })),
+
+          }
+          : undefined,
       },
     });
 
-    if (userRequest.image !== isProductExist.image)
+    if (userRequest.image !== isProductExist.image) {
       removeFileIfExists(isProductExist.image);
+    }
 
     return {};
   }
