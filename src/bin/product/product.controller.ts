@@ -53,15 +53,30 @@ export class ProductController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const request: updateProduct = req.body as updateProduct;
+      const files = req.files as Express.Multer.File[];
+      const request: updateProduct = {
+        ...req.body,
+        image: files?.[0]?.filename || req.body.image,
+      };
 
       await logRequest(req, `PUT /product/update ${JSON.stringify(request)}`);
 
       const response = await ProductService.updateProduct(request);
+
+      // jika upload gambar baru, hapus gambar lama dari folder
+      if (
+        files?.[0] &&
+        req.body.image &&
+        req.body.image !== files[0].filename
+      ) {
+        removeFileIfExists(`product/${req.body.image}`);
+      }
+
       Wrapper.success(res, true, response, "Succes update product", 200);
     } catch (error) {
-      if (req.body.originalname)
-        removeFileIfExists(`product/${req.body.originalname}`);
+      if (req.file) {
+        removeFileIfExists(`product/${req.file.filename}`);
+      }
       next(error);
     }
   }
