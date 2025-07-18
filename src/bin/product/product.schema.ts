@@ -93,32 +93,6 @@ export class productSchema {
       .optional(),
   });
 
-    id: Joi.string().length(24).required(),
-    name: Joi.string().min(3).max(100),
-    description: Joi.string().min(10),
-    price: Joi.number().positive(),
-    stock: Joi.number().integer().min(0),
-    image: Joi.string().optional().messages({
-      "string.base": "Link gambar harus berupa teks",
-      "string.uri": "Format URL gambar tidak valid",
-      "any.required": "Gambar wajib diisi",
-    }),
-    category_id: Joi.string().required().messages({
-      "any.required": "Kategori wajib diisi",
-    }),
-    category: Joi.string().length(5),
-    variants: Joi.array().items(
-      Joi.object({
-        size: Joi.string().required(),
-        color: Joi.string().required(),
-        stock: Joi.number().integer().required()
-      })
-    ),
-  })
-    .min(1)
-    .messages({
-      "object.min": "Setidaknya satu field harus diubah",
-    });
 
   static readonly GetByIdProduct = Joi.object({
     id: Joi.string().required().messages({
