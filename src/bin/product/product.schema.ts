@@ -79,8 +79,9 @@ export class productSchema {
       "string.uri": "Format URL gambar tidak valid",
       "any.required": "Gambar wajib diisi",
     }),
-    category: Joi.string().optional().messages({
-      "any.required": "Kategori wajib diisi",
+    category_id: Joi.string().length(24).optional().messages({
+      "string.base": "ID kategori harus berupa teks",
+      "string.length": "ID kategori harus 24 karakter",
     }),
     variants: Joi.array()
       .items(

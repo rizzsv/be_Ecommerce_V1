@@ -56,6 +56,7 @@ export class ProductController {
       const files = req.files as Express.Multer.File[];
       const request: updateProduct = {
         ...req.body,
+        category_id: req.body.category || req.body.category_id,
         image: files?.[0]?.filename || req.body.image,
       };
 

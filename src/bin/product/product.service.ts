@@ -72,7 +72,10 @@ export class ProductService {
       throw new ErrorHandler(404, "Product tidak ditemukan");
     }
 
-    userRequest.category_id ??= isProductExist.category_id;
+    userRequest.category_id =
+      userRequest.category_id ??
+      userRequest.category ??
+      isProductExist.category_id;
     userRequest.description ??= isProductExist.description;
     userRequest.price ??= isProductExist.price;
     userRequest.stock ??= isProductExist.stock;
@@ -88,7 +91,6 @@ export class ProductService {
         stock: userRequest.stock,
         image: userRequest.image,
         category_id: userRequest.category_id,
-
         variants: userRequest.variants
           ? {
             deleteMany: {}, // Hapus semua variant lama
@@ -128,7 +130,7 @@ export class ProductService {
     }
 
     await prisma.productImage.deleteMany({
-      where: {productId: userRequest.id}
+      where: { productId: userRequest.id }
     })
 
     await prisma.product.delete({
@@ -213,10 +215,10 @@ export class ProductService {
       prisma.product.count({
         where: filter,
       }),
-      
+
     ])
 
-    if(result.length === 0) {
+    if (result.length === 0) {
       loggerConfig.info(ctx, 'No products found', scp);
       throw new ErrorHandler(404, 'Tidak ada produk ditemukan');
     }
@@ -225,7 +227,7 @@ export class ProductService {
       totalItem,
       currentPage: userRequest.page,
       quantity: userRequest.quantity,
-       totalPages: Math.ceil(totalItem / userRequest.quantity),
+      totalPages: Math.ceil(totalItem / userRequest.quantity),
     }
 
     loggerConfig.info(ctx, 'Success get product data', scp)
