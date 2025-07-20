@@ -285,6 +285,8 @@ export class ProductService {
         image: item.image,
         categoryId: item.category_id,
         categoryName: item.category?.name,
+        stock: item.stock,
+        status: item.status,
         variants: item.variants,
         images: item.images.map((img) => img.url),
         createdAt: item.created_at
