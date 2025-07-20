@@ -42,6 +42,7 @@ model Product {
   created_at  DateTime         @default(now())
   updated_at  DateTime         @updatedAt
   category    Category?        @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  status      String           @default("Available")
   orderItems  OrderItem[]
   variants    ProductVariant[]
   images      ProductImage[]
