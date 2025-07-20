@@ -56,6 +56,7 @@ model ProductVariant {
   size      String
   color     String
   stock     Int
+  status    String  @default("Available")
 
   product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 }
@@ -67,7 +68,7 @@ model Category {
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   products   Product[]
-} 
+}
 
 model ProductImage {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
@@ -78,15 +79,15 @@ model ProductImage {
 }
 
 model Order {
-  id               String      @id @default(auto()) @map("_id") @db.ObjectId
-  user_id          String      @db.ObjectId
-  status           OrderStatus @default(PENDING)
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
+  user_id          String        @db.ObjectId
+  status           OrderStatus   @default(PENDING)
   total_amount     Float
   shipping_address String
   payment_method   PaymentMethod
-  created_at       DateTime    @default(now())
-  updated_at       DateTime    @updatedAt
-  user             User        @relation(fields: [user_id], references: [id])
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+  user             User          @relation(fields: [user_id], references: [id])
   orderItems       OrderItem[]
 }
 
@@ -101,22 +102,22 @@ model OrderItem {
 }
 
 model CartItem {
-  id         String  @id @default(auto()) @map("_id") @db.ObjectId
-  user_id    String  @db.ObjectId
-  product_id String  @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id    String   @db.ObjectId
+  product_id String   @db.ObjectId
   quantity   Int
-  user       User    @relation(fields: [user_id], references: [id])
-  product    Product @relation(fields: [product_id], references: [id])
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+  user       User     @relation(fields: [user_id], references: [id])
+  product    Product  @relation(fields: [product_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Wishlist {
-  id         String  @id @default(auto()) @map("_id") @db.ObjectId
-  user_id    String  @db.ObjectId
-  product_id String  @db.ObjectId
-  user       User    @relation(fields: [user_id], references: [id])
-  product    Product @relation(fields: [product_id], references: [id])
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id    String   @db.ObjectId
+  product_id String   @db.ObjectId
+  user       User     @relation(fields: [user_id], references: [id])
+  product    Product  @relation(fields: [product_id], references: [id])
   created_at DateTime @default(now())
 }
 

@@ -60,11 +60,29 @@ export class ProductService {
     const ctx = "Update Product";
     const scp = "product";
 
+    if (typeof req.variants === "string") {
+  try {
+    req.variants = JSON.parse(req.variants);
+  } catch (err) {
+    throw new ErrorHandler(400, "Format variants tidak valid (harus JSON array)");
+  }
+}
+
+
     const userRequest = Validator.Validate(productSchema.UpdateProduct, req);
 
     const isProductExist = await prisma.product.findFirst({
       where: { id: userRequest.id },
-      include: { variants: true },
+      select: {
+        variants: true,
+        status: true,
+        category_id: true,
+        name: true,
+        description: true,
+        price: true,
+        stock: true,
+        image: true,
+      }
     });
 
     if (!isProductExist) {
@@ -78,9 +96,15 @@ export class ProductService {
       isProductExist.category_id;
     userRequest.description ??= isProductExist.description;
     userRequest.price ??= isProductExist.price;
-    userRequest.stock ??= isProductExist.stock;
+    if (typeof userRequest.stock !== "number") {
+      userRequest.stock = isProductExist.stock;
+    }
+    userRequest.status ??= isProductExist.status;
     userRequest.image ??= isProductExist.image;
     userRequest.name ??= isProductExist.name;
+
+
+    const status = userRequest.stock === 0 ? "Sold Out" : "Available";
 
     await prisma.product.update({
       where: { id: userRequest.id },
@@ -91,6 +115,7 @@ export class ProductService {
         stock: userRequest.stock,
         image: userRequest.image,
         category_id: userRequest.category_id,
+        status,
         variants: userRequest.variants
           ? {
             deleteMany: {}, // Hapus semua variant lama
@@ -98,8 +123,8 @@ export class ProductService {
               color: variant.color,
               size: variant.size,
               stock: variant.stock,
+              status: variant.stock === 0 ? "Sold Out" : "Available",
             })),
-
           }
           : undefined,
       },
@@ -154,11 +179,28 @@ export class ProductService {
       where: {
         id: userRequest.id,
       },
-      include: {
-        category: true,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        image: true,
+        category_id: true,
+        stock: true,
+        status: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
         variants: true,
-        images: true,
-      }
+        images: {
+          select: {
+            url: true,
+          },
+        },
+        created_at: true,
+      },
     });
 
     if (!isProductExist) {
@@ -174,6 +216,8 @@ export class ProductService {
       image: isProductExist.image,
       categoryId: isProductExist.category_id,
       categoryName: isProductExist.category?.name,
+      stock: isProductExist.stock,
+      status: isProductExist.status,
       variants: isProductExist.variants,
       images: isProductExist.images.map((img) => img.url),
       createdAt: isProductExist.created_at,

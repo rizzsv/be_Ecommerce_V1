@@ -15,6 +15,7 @@ export interface updateProduct {
   price?: number;
   stock?: number;
   image?: string;
+  status?: string;
   category?: string;
   category_id?: string;
   variants?: VariantInput[]

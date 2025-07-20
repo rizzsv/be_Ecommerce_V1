@@ -83,6 +83,7 @@ export class productSchema {
       "string.base": "ID kategori harus berupa teks",
       "string.length": "ID kategori harus 24 karakter",
     }),
+    status: Joi.string().valid("Available", "Sold Out").optional(),
     variants: Joi.array()
       .items(
         Joi.object({
