@@ -30,68 +30,19 @@ publicApi.post(
 
 /** api for user */
 
-// edit profile
-publicApi.put(
-    `${globalEnv.PREFIX}/user`,
-    Jwt.jwtValidator,
-    UserController.UpdateUserByUser
-)
-
-// change password
-publicApi.put(
-    `${globalEnv.PREFIX}/user/change-password`,
-    UserController.ChangePassword
-)
+publicApi.put( `${globalEnv.PREFIX}/user`,Jwt.jwtValidator,UserController.UpdateUserByUser)
+publicApi.put(`${globalEnv.PREFIX}/user/change-password`, UserController.ChangePassword)
 
 /** Api for user order */
-publicApi.post(
-    `${globalEnv.PREFIX}/order`,
-    Jwt.jwtValidator,
-    OrderController.createOrder
-)
+publicApi.post( `${globalEnv.PREFIX}/order`,Jwt.jwtValidator,OrderController.createOrder)
 
 /** Api for cart */
-publicApi.post(
-    `${globalEnv.PREFIX}/cart`,
-    Jwt.jwtValidator,
-    CartController.createCart
-)
-
-
-publicApi.put(
-    `${globalEnv.PREFIX}/cart`,
-    Jwt.jwtValidator,
-    CartController.updateCart
-)
-
-
-publicApi.get(
-    `${globalEnv.PREFIX}/cart`,
-    Jwt.jwtValidator,
-    CartController.getCart
-)
-
-publicApi.delete(
-    `${globalEnv.PREFIX}/cart/:id`,
-    Jwt.jwtValidator,
-    CartController.deleteCart
-)
+publicApi.post(`${globalEnv.PREFIX}/cart`,Jwt.jwtValidator,CartController.createCart)
+publicApi.put(`${globalEnv.PREFIX}/cart`,Jwt.jwtValidator, CartController.updateCart)
+publicApi.get(`${globalEnv.PREFIX}/cart`,Jwt.jwtValidator,CartController.getCart)
+publicApi.delete( `${globalEnv.PREFIX}/cart/:id`, Jwt.jwtValidator, CartController.deleteCart)
 
 /** Api for wishlist */
-publicApi.post(
-    `${globalEnv.PREFIX}/wishlist/create`,
-    Jwt.jwtValidator,
-    wishlistController.createWishlist
-)
-
-publicApi.get(
-    `${globalEnv.PREFIX}/wishlist`,
-    Jwt.jwtValidator,
-    wishlistController.getWishList
-)
-
-publicApi.delete(
-    `${globalEnv.PREFIX}/wishlist/delete/:id`,
-    Jwt.jwtValidator,
-    wishlistController.deleteWishlist
-)
+publicApi.post(`${globalEnv.PREFIX}/wishlist/create`,Jwt.jwtValidator,wishlistController.createWishlist)
+publicApi.get(`${globalEnv.PREFIX}/wishlist`,Jwt.jwtValidator,wishlistController.getWishList)
+publicApi.delete(`${globalEnv.PREFIX}/wishlist/delete/:id`,Jwt.jwtValidator,wishlistController.deleteWishlist)
