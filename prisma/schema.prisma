@@ -55,8 +55,6 @@ model ProductVariant {
   productId String? @db.ObjectId
   size      String
   color     String
-  stock     Int
-  status    String  @default("Available")
 
   product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 }

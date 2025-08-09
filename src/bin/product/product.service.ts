@@ -121,9 +121,7 @@ export class ProductService {
             deleteMany: {}, // Hapus semua variant lama
             create: userRequest.variants.map((variant: VariantInput) => ({
               color: variant.color,
-              size: variant.size,
-              stock: variant.stock,
-              status: variant.stock === 0 ? "Sold Out" : "Available",
+              size: variant.size
             })),
           }
           : undefined,
@@ -193,7 +191,12 @@ export class ProductService {
             name: true,
           },
         },
-        variants: true,
+        variants: {
+          select: {
+            color: true,
+            size: true,
+          }
+        },
         images: {
           select: {
             url: true,
@@ -251,8 +254,13 @@ export class ProductService {
         skip: (userRequest.page - 1) * userRequest.quantity,
         take: userRequest.quantity,
         include: {
+          variants: {
+            select: {
+              color: true,
+              size: true,
+            },
+          },
           category: true,
-          variants: true,
           images: true,
         }
       }),

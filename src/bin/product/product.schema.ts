@@ -39,7 +39,6 @@ export class productSchema {
         Joi.object({
           size: Joi.string().required(),
           color: Joi.string().required(),
-          stock: Joi.number().integer().min(0).required(),
         })
       )
       .optional(),
@@ -89,7 +88,6 @@ export class productSchema {
         Joi.object({
           size: Joi.string().required(),
           color: Joi.string().required(),
-          stock: Joi.number().integer().min(0).required(),
         })
       )
       .optional(),

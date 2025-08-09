@@ -40,5 +40,4 @@ export interface deleteProduct {
 export interface VariantInput {
   size: string;
   color: string;
-  stock: number;
 }
