@@ -30,6 +30,9 @@ export class ProductService {
       throw new ErrorHandler(409, "Product sudah terdaftar");
     }
 
+    // Tentukan status berdasarkan stock
+    const status = userRequest.stock === 0 ? "Sold Out" : "Available";
+
     const create = await prisma.product.create({
       data: {
         name: userRequest.name,
