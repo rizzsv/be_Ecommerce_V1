@@ -240,6 +240,7 @@ export class ProductService {
       ...(userRequest.search && {
         name: {
           contains: userRequest.search,
+          mode: 'insensitive',
         },
       }),
       created_at: {
