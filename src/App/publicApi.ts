@@ -46,3 +46,4 @@ publicApi.delete( `${globalEnv.PREFIX}/cart/:id`, Jwt.jwtValidator, CartControll
 publicApi.post(`${globalEnv.PREFIX}/wishlist/create`,Jwt.jwtValidator,wishlistController.createWishlist)
 publicApi.get(`${globalEnv.PREFIX}/wishlist`,Jwt.jwtValidator,wishlistController.getWishList)
 publicApi.delete(`${globalEnv.PREFIX}/wishlist/delete/:id`,Jwt.jwtValidator,wishlistController.deleteWishlist)
+

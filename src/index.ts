@@ -5,6 +5,7 @@ import { connectDb } from "./config/db";
 import { publicApi } from "./App/publicApi";
 import { privateApi } from "./App/privateApi";
 import path from "path";
+import binderbyteRoute from "./bin/shipping/shipping.route";
 import {globalErrorHandler } from "./middleware/error.middleware"
 
 dotenv.config();
@@ -32,6 +33,9 @@ app.use(privateApi)
 
 // Apply Error Middleware
 app.use(globalErrorHandler)
+
+// Apply Shipping Route
+app.use("/api/binderbyte", binderbyteRoute);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🔥 BOOM! Server ignited on port ${PORT}. Let’s build something awesome!`));
