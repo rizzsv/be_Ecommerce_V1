@@ -20,16 +20,28 @@ export class OrderService {
     const userRequest = Validator.Validate(orderSchema.CreateOrder, req);
     const accountInfo = getPaymentAccount(userRequest.payment_method);
 
-    const isOrderExist = await prisma.order.count({
-      where: {
-        OR: [{ user_id: userRequest.user_id, status: userRequest.status }],
-      },
-    });
+    const order = await prisma.$transaction(async (tx) => {
+      for (const item of userRequest.items) {
+        const product = await tx.product.findUnique({
+          where: { id: item.product_id },
+        });
 
-    if (isOrderExist !== 0) {
-      loggerConfig.error(ctx, "Order already regist");
-      throw new ErrorHandler(409, "Order sudah terdaftar");
-    }
+        if (!product) {
+          throw new ErrorHandler(404, `Produk dengan ID ${item.product_id} tidak ditemukan`);
+        }
+
+        if (product.stock < item.quantity) {
+          throw new ErrorHandler(400, `Stok produk ${product.name} tidak mencukupi`);
+        }
+
+        await tx.product.update({
+          where: { id: item.product_id },
+          data: {
+            stock: product.stock - item.quantity,
+          },
+        });
+      }
+    })
 
     const product = await prisma.product.findFirst({
       where: { id: userRequest.items[0].product_id },
