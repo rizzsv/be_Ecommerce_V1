@@ -25,6 +25,7 @@ import { MetaData } from "../../utils/type.utils";
 import { CreateSecureOtp } from "../../utils/createOtp";
 import { Nodemailer } from "../../helper/nodemailer/nodemailer.helper";
 import { globalEnv } from "../../utils/globalEnv.utils";
+import { calculateAccountAge } from "../../helper/calculateaccount.helper";
 
 export class UserService {
   /** Login User */
@@ -249,6 +250,7 @@ export class UserService {
           email: user.email,
           role: user.role,
           phoneNum: user.phoneNum,
+          accountAge: calculateAccountAge(user.createdAt)
         }))
       ),
       metaData,
