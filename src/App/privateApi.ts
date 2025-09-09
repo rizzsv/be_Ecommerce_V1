@@ -30,7 +30,7 @@ privateApi.delete( `${globalEnv.PREFIX}/user/:id`, Jwt.jwtValidator, Jwt.allowed
 
 privateApi.post(`${globalEnv.PREFIX}/product/create`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN),upload.array('image', 5),ProductController.createProduct)
 privateApi.put(`${globalEnv.PREFIX}/product/update`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN),upload.array('image', 5),ProductController.updateProduct)
-privateApi.get(`${globalEnv.PREFIX}/product`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN, roles.USER),ProductController.getAllProduct)
+privateApi.get(`${globalEnv.PREFIX}/product`,Jwt.jwtValidator,ProductController.getAllProduct)
 privateApi.get(`${globalEnv.PREFIX}/product/:id`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN, roles.USER),ProductController.getProductById)
 privateApi.delete( `${globalEnv.PREFIX}/product/:id`, Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN), ProductController.deleteProduct)
 

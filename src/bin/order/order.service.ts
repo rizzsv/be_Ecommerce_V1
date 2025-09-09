@@ -30,7 +30,7 @@ export class OrderService {
           throw new ErrorHandler(404, `Produk dengan ID ${item.product_id} tidak ditemukan`);
         }
 
-        if (product.stock < item.quantity) {
+        if (product.stock <= item.quantity) {
           throw new ErrorHandler(400, `Stok produk ${product.name} tidak mencukupi`);
         }
 
