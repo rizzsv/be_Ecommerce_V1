@@ -24,6 +24,7 @@
     "mongoose": "^8.16.0",
     "multer": "^2.0.1",
     "mustache": "^4.2.0",
+    "nanoid": "^5.1.5",
     "nodemailer": "^7.0.3",
     "winston": "^3.17.0",
     "zod": "^3.25.67"

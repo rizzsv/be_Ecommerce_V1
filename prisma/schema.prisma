@@ -83,6 +83,9 @@ model Order {
   total_amount     Float
   shipping_address String
   payment_method   PaymentMethod
+  courier         Courier
+  awb              String?
+  shipping_cost    Float
   created_at       DateTime      @default(now())
   updated_at       DateTime      @updatedAt
   user             User          @relation(fields: [user_id], references: [id])
@@ -181,4 +184,33 @@ enum PaymentMethod {
   BCA
   MANDIRI
   BRI
+}
+
+enum Courier {
+  JNE
+  POS_INDONESIA
+  JNT
+  JNT_CARGO
+  SICEPAT
+  TIKI
+  ANTERAJA
+  WAHANA
+  NINJA
+  LION
+  PCP_EXPRESS
+  JET_EXPRESS
+  REX_EXPRESS
+  FIRST_LOGISTICS
+  ID_EXPRESS
+  SHOPEE_EXPRESS
+  KGXPRESS
+  SAP_EXPRESS
+  JX_EXPRESS
+  RPX
+  LAZADA_EXPRESS
+  INDAH_CARGO
+  DAKOTA_CARGO
+  KURIR_REKOMENDASI
+  LIST_COURIER
+  CHECK_QUOTA_HIT
 }

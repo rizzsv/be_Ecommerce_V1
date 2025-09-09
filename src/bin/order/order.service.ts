@@ -3,6 +3,8 @@ import { Validator } from "../../utils/validator.utils";
 import { orderSchema } from "./order.schema";
 import loggerConfig from "../../config/logger.config";
 import { ErrorHandler } from "../../config/custom.config";
+import { generateResi } from "../../utils/resi-generator.utils";
+
 import {
   CreateOrderDTO,
   DeleteOrderDTO,
@@ -17,6 +19,7 @@ export class OrderService {
   static async createOrder(req: CreateOrderDTO, userId: string) {
     const ctx = "Create Order";
     const scp = "Order";
+    const resi = generateResi(req.courier);
     const userRequest = Validator.Validate(orderSchema.CreateOrder, req);
     const accountInfo = getPaymentAccount(userRequest.payment_method);
 
@@ -56,6 +59,9 @@ export class OrderService {
         total_amount: userRequest.total_amount,
         shipping_address: userRequest.shipping_address,
         payment_method: userRequest.payment_method,
+        courier: userRequest.courier,
+        awb: resi,
+        shipping_cost: userRequest.shipping_cost,
         orderItems: {
           create: userRequest.items.map((item: OrderItemInput) => ({
             product_id: item.product_id,

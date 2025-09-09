@@ -11,6 +11,9 @@ export interface CreateOrderDTO {
   total_amount: number;
   shipping_address: string;
   payment_method: PaymentMethod;
+  courier: string;
+  awb: string;
+  shipping_cost: number;
   items: {
     product_id: string;
     quantity: number;

@@ -31,6 +31,47 @@ export class orderSchema {
         "any.required": "Metode pembayaran wajib diisi",
       }),
 
+    courier: Joi.string()
+      .valid(
+        "JNE",
+        "POS Indonesia",
+        "JNT",
+        "JNT Cargo",
+        "SiCepat",
+        "Tiki",
+        "AnterAja",
+        "Wahana",
+        "Ninja",
+        "Lion",
+        "PCP Express",
+        "JET Express",
+        "REX Express",
+        "First Logistics",
+        "ID Express",
+        "Shopee Express",
+        "KGXpress",
+        "SAP Express",
+        "JX Express",
+        "RPX",
+        "Lazada Express",
+        "Indah Cargo",
+        "Dakota Cargo",
+        "Kurir Rekomendasi",
+        "List Courier",
+        "Check Quota/HIT").required()
+      .messages({
+        "any.only": "Kurir tidak valid",
+        "any.required": "Kurir wajib diisi",
+      }),
+    shipping_cost: Joi.number().positive().required().messages({
+      "number.base": "Biaya pengiriman harus berupa angka",
+      "number.positive": "Biaya pengiriman harus lebih dari 0",
+      "any.required": "Biaya pengiriman wajib diisi",
+    }),
+    awb: Joi.string().allow(null, "").optional().messages({
+      "string.base": "AWB harus berupa teks",
+      "string.empty": "AWB tidak boleh kosong",
+    }),
     items: Joi.array()
       .items(
         Joi.object({
