@@ -79,13 +79,13 @@ model ProductImage {
 model Order {
   id               String        @id @default(auto()) @map("_id") @db.ObjectId
   user_id          String        @db.ObjectId
-  status           OrderStatus   @default(PENDING)
+  status           OrderStatus   
   total_amount     Float
   shipping_address String
   payment_method   PaymentMethod
-  courier         Courier
+  courier         Courier?
   awb              String?
-  shipping_cost    Float
+  shipping_cost    Float?
   created_at       DateTime      @default(now())
   updated_at       DateTime      @updatedAt
   user             User          @relation(fields: [user_id], references: [id])

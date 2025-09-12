@@ -102,7 +102,7 @@ export class orderSchema {
       "any.required": "ID order wajib diisi",
     }),
     status: Joi.string()
-      .valid("PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED")
+      .valid("PENDING", "PAID", "SHIPPED", "DELIVERED", "COMPLETED", "CANCELLED")
       .required()
       .messages({
         "any.only": "Status tidak valid",
@@ -124,7 +124,9 @@ export class orderSchema {
       "string.length": "ID produk harus 24 karakter (ObjectId)",
       "any.required": "ID produk wajib diisi",
     }),
-    user_id: Joi.string().optional(),
+    user_id: Joi.string().length(24).optional().messages({
+      "string.length": "ID user harus 24 karakter (ObjectId)",
+    }),
   });
 
   static readonly DeleteOrder = Joi.object({

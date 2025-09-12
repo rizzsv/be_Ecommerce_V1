@@ -103,16 +103,28 @@ export class OrderService {
     userRequest.order_id ??= isOrderExist.id;
     userRequest.status ??= isOrderExist.status;
 
+    // let trackingUpdate: any = {}
+    // if (userRequest.status === "COMPLETED") {
+    //   trackingUpdate = {
+    //     tracking_number_expired_at: new Date()
+    //   }
+    // }
+
+
     await prisma.order.update({
       where: {
         id: userRequest.order_id,
       },
       data: {
         status: userRequest.status,
+        awb: userRequest.status === "COMPLETED" ? null : isOrderExist.awb
       },
     });
 
-    return {};
+    return {
+      // message: `Order status updated to ${userRequest.status}`,
+      // trackingExpired: userRequest.status === "COMPLETE",
+    };
   }
 
   static async getOrderById(req: GetOrderByIdDTO) {
@@ -167,7 +179,19 @@ export class OrderService {
 
     loggerConfig.info(ctx, `Order retrieved successfully`, scp);
 
-    return order;
+    return {
+      id: order.id,
+      user_id: order.user_id,
+      status: order.status,
+      total_amount: order.total_amount,
+      shipping_address: order.shipping_address,
+      payment_method: order.payment_method,
+      courier: order.courier,
+      awb: order.awb,
+      shipping_cost: order.shipping_cost,
+      created_at: order.created_at,
+      updated_at: order.updated_at,
+    };
   }
 
   static async getAllOrders(req: GetOrderDTO) {
@@ -233,7 +257,7 @@ export class OrderService {
     }
   }
 
-    static async deleteOrder(req: DeleteOrderDTO) {
+  static async deleteOrder(req: DeleteOrderDTO) {
     const ctx = "Delete Order";
     const scp = "Order";
 
