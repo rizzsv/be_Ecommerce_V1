@@ -127,6 +127,9 @@ export class orderSchema {
     user_id: Joi.string().length(24).optional().messages({
       "string.length": "ID user harus 24 karakter (ObjectId)",
     }),
+    order_id: Joi.string().length(24).optional().messages({
+      "string.length": "ID order harus 24 karakter (ObjectId)",
+    }),
   });
 
   static readonly DeleteOrder = Joi.object({

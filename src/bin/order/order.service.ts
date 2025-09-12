@@ -130,6 +130,8 @@ export class OrderService {
   static async getOrderById(req: GetOrderByIdDTO) {
     const ctx = "Get Order By ID";
     const scp = "Order";
+    
+    
 
     const userRequest = Validator.Validate(orderSchema.GetOrderById, req);
 

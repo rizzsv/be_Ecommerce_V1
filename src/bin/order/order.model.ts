@@ -35,8 +35,9 @@ export interface GetOrderDTO {
 
 export interface GetOrderByIdDTO {
   id: string;
-  user_id?: string; // Optional for admin queries
+  user_id?: string;
 }
+
 
 export interface DeleteOrderDTO {
   id: string;
