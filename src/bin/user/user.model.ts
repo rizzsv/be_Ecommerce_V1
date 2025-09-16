@@ -1,9 +1,9 @@
-import { Role, User } from '@prisma/client';
+import { Role, User, StatusAccount } from '@prisma/client';
 
 export interface login {
     identity: string
     password: string
-
+    statusAccount : StatusAccount
 }
 
 export interface createUser {
@@ -19,6 +19,8 @@ export interface updateUser {
     username?: string
     email?: string
     password?: string
+    StatusAccount?: StatusAccount
+    phoneNum?: string
     role?: Role
 }
 

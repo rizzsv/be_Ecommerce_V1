@@ -26,6 +26,7 @@ import { CreateSecureOtp } from "../../utils/createOtp";
 import { Nodemailer } from "../../helper/nodemailer/nodemailer.helper";
 import { globalEnv } from "../../utils/globalEnv.utils";
 import { calculateAccountAge } from "../../helper/calculateaccount.helper";
+import { StatusAccount } from "@prisma/client";
 
 export class UserService {
   /** Login User */
@@ -56,6 +57,14 @@ export class UserService {
       throw new ErrorHandler(400, "Akun belum terdaftar");
     }
 
+    if (
+      isUserExist.StatusAccount === StatusAccount.Inactive ||
+      isUserExist.StatusAccount === StatusAccount.Suspended
+    ) {
+      loggerConfig.error(ctx, "Account is not active", scp);
+      throw new ErrorHandler(403, "Akun tidak aktif atau dibekukan");
+    }
+
     const isPasswordMatch = await bcrypt.compare(
       userRequest.password,
       isUserExist.password
@@ -76,6 +85,8 @@ export class UserService {
     return {
       token,
       role: isUserExist.role,
+      statusAccount: isUserExist.StatusAccount,
+      message: "Login successful",
     };
   }
 
@@ -151,6 +162,7 @@ export class UserService {
       email: userRequest.email ?? existing.email,
       username: userRequest.username ?? existing.username,
       phoneNum: userRequest.phoneNum ?? existing.phoneNum,
+      StatusAccount: userRequest.StatusAccount ?? existing.StatusAccount,
     };
 
     //cek duplicate account

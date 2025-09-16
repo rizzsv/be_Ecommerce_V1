@@ -116,6 +116,15 @@ export class userSchema {
       "string.email": "Format email tidak valid",
     }),
 
+    phoneNum: Joi.string()
+      .pattern(/^(\+62|62|0)[0-9]{9,14}$/)
+      .messages({
+        "string.pattern.base":
+          "Phone number must start with 0, 62, or +62 and contain 10-15 digits",
+        "string.empty": "Phone number is required",
+        "any.required": "Phone number is required",
+      }),
+    StatusAccount: Joi.string().valid("Active", "Inactive", "Suspended"),
     role: Joi.string().valid("ADMIN", "USER"),
   });
 

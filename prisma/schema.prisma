@@ -20,6 +20,7 @@ model User {
   password      String
   phoneNum      String?        @unique
   role          Role           @default(USER)
+  StatusAccount StatusAccount  @default(Active)
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   onDelete      Boolean        @default(false)
@@ -194,6 +195,12 @@ enum OrderStatus {
   COMPLETED
   CANCELLED
   REFUNDED
+}
+
+enum StatusAccount {
+  Active
+  Inactive
+  Suspended
 }
 
 enum PaymentMethod {
