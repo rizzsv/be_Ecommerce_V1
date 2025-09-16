@@ -301,7 +301,8 @@ export class ProductService {
         status: item.status,
         variants: item.variants,
         images: item.images.map((img) => img.url),
-        createdAt: item.created_at
+        createdAt: item.created_at,
+        updatedAt: item.updated_at,
       })),
       metaData,
     }

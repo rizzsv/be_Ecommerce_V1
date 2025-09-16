@@ -14,42 +14,70 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
   username      String
-  email         String         @unique
+  email         String          @unique
   password      String
-  phoneNum      String?        @unique
-  role          Role           @default(USER)
-  StatusAccount StatusAccount  @default(Active)
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
-  onDelete      Boolean        @default(false)
-  createdAt     DateTime       @default(now())
+  phoneNum      String?         @unique
+  role          Role            @default(USER)
+  StatusAccount StatusAccount   @default(Active)
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  onDelete      Boolean         @default(false)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  likeProducts  likeProduct[]
   orders        Order[]
+  ratting       RatingProduct[]
   wishlist      Wishlist[]
   cartItems     CartItem[]
   notifications Notification[]
   refund        refund[]
-  logs          Log[]          @relation("UserLogs")
+  logs          Log[]           @relation("UserLogs")
 }
 
 model Product {
-  id          String           @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String
-  price       Float
-  stock       Int
-  image       String
-  category_id String?          @db.ObjectId
-  created_at  DateTime         @default(now())
-  updated_at  DateTime         @updatedAt
-  category    Category?        @relation(fields: [category_id], references: [id], onDelete: SetNull)
-  status      String           @default("Available")
-  orderItems  OrderItem[]
-  variants    ProductVariant[]
-  images      ProductImage[]
-  cartItems   CartItem[]
-  wishlist    Wishlist[]
+  id           String           @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  description  String
+  price        Float
+  stock        Int
+  image        String
+  category_id  String?          @db.ObjectId
+  created_at   DateTime         @default(now())
+  updated_at   DateTime         @updatedAt
+  category     Category?        @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  status       String           @default("Available")
+  orderItems   OrderItem[]
+  likeProducts likeProduct[]
+  variants     ProductVariant[]
+  ratting      RatingProduct[]
+  images       ProductImage[]
+  cartItems    CartItem[]
+  wishlist     Wishlist[]
+}
+
+model RatingProduct {
+  id            String             @id @default(auto()) @map("_id") @db.ObjectId
+  user_id       String             @db.ObjectId
+  product_id    String             @db.ObjectId
+  messageRating GenerateRating
+  review        String?
+  created_at    DateTime           @default(now())
+  updated_at    DateTime           @updatedAt
+
+  user    User    @relation(fields: [user_id], references: [id])
+  product Product @relation(fields: [product_id], references: [id])
+}
+
+model likeProduct {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id    String   @db.ObjectId
+  product_id String   @db.ObjectId
+  created_at DateTime @default(now())
+
+  user    User    @relation(fields: [user_id], references: [id])
+  product Product @relation(fields: [product_id], references: [id])
 }
 
 model ProductVariant {
@@ -195,6 +223,14 @@ enum OrderStatus {
   COMPLETED
   CANCELLED
   REFUNDED
+}
+
+enum GenerateRating {
+  EXCELLENT
+  VERY_GOOD
+  GOOD
+  AVERAGE
+  POOR
 }
 
 enum StatusAccount {
