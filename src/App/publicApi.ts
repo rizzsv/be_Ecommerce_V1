@@ -5,6 +5,7 @@ import { Jwt } from '../helper/jwt.helper'
 import { OrderController } from '../bin/order/order.controller'
 import { CartController } from '../bin/Cart/cart.controller'
 import { wishlistController } from '../bin/wishlist/wishlist.controller'
+import { RattingController } from '../bin/rating/rating.controller'
 
 export const publicApi = express.Router()
 
@@ -46,4 +47,9 @@ publicApi.delete( `${globalEnv.PREFIX}/cart/:id`, Jwt.jwtValidator, CartControll
 publicApi.post(`${globalEnv.PREFIX}/wishlist/create`,Jwt.jwtValidator,wishlistController.createWishlist)
 publicApi.get(`${globalEnv.PREFIX}/wishlist`,Jwt.jwtValidator,wishlistController.getWishList)
 publicApi.delete(`${globalEnv.PREFIX}/wishlist/delete/:id`,Jwt.jwtValidator,wishlistController.deleteWishlist)
+
+/** Api for rating */
+publicApi.post(`${globalEnv.PREFIX}/rating/create`,Jwt.jwtValidator,RattingController.createRating)
+publicApi.put(`${globalEnv.PREFIX}/rating/update/:id`,Jwt.jwtValidator,RattingController.updateRating)
+publicApi.get(`${globalEnv.PREFIX}/rating/product/:id`,Jwt.jwtValidator,RattingController.getRatingByProduct)
 

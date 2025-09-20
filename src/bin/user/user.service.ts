@@ -83,10 +83,11 @@ export class UserService {
     });
 
     return {
-      token,
+      username: isUserExist.username,
+      email: isUserExist.email,
       role: isUserExist.role,
       statusAccount: isUserExist.StatusAccount,
-      message: "Login successful",
+      token
     };
   }
 

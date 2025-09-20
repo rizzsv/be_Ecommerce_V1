@@ -6,7 +6,7 @@ import { createRating, deleteRating, getRatingByProduct, updateRating } from "./
 import { rattingSchema } from "./rating.schema";
 
 export class RatingService {
-    static async createRating(req: createRating) {
+    static async createRating(req: createRating, userId: string) {
         const ctx = "Create rating";
         const scp = "Rating";
 
@@ -24,9 +24,9 @@ export class RatingService {
             throw new ErrorHandler(400, "Kamu sudah memberikan rating untuk produk ini");
         }
 
-        await prisma.ratingProduct.create({
+        const ratingProduct = await prisma.ratingProduct.create({
             data: {
-                user_id: userRequest.user_id,
+                user_id: userId,
                 product_id: userRequest.product_id,
                 messageRating: userRequest.messageRating,
                 review: userRequest.review,
@@ -34,17 +34,19 @@ export class RatingService {
         });
 
         loggerConfig.info(ctx, "Rating created successfully", scp);
-        return {};
+        return {
+            ...ratingProduct
+        };
     }
 
-    static async updateRating(req: updateRating) {
+    static async updateRating(req: updateRating, userId: string) {
         const ctx = "Update Rating";
         const scp = "Rating";
 
         const userRequest = Validator.Validate(rattingSchema.UpdateRating, req);
 
-        const rating = await prisma.ratingProduct.findUnique({
-            where: { id: userRequest.id },
+        const rating = await prisma.ratingProduct.findFirst({
+            where: { user_id: userId, product_id: userRequest.product_id },
         });
 
         if (!rating) {
@@ -53,7 +55,7 @@ export class RatingService {
         }
 
         await prisma.ratingProduct.update({
-            where: { id: userRequest.id },
+            where: { id: rating.id },
             data: {
                 messageRating: userRequest.messageRating,
                 review: userRequest.review,
@@ -65,24 +67,45 @@ export class RatingService {
     }
 
     static async getRatingByProduct(req: getRatingByProduct) {
-        const ctx = "Get Rating By Product";
-        const scp = "Rating";
+    const ctx = "Get Rating By Product";
+    const scp = "Rating";
 
-        const userRequest = Validator.Validate(rattingSchema.GetRatingByProduct, req);
+    const userRequest = Validator.Validate(rattingSchema.GetRatingByProduct, req);
 
-        const rating = await prisma.ratingProduct.findFirst({
-            where: { product_id: userRequest.id },
-        });
+    const ratingExists = await prisma.ratingProduct.findFirst({
+        where: { id: userRequest.id },
+    });
 
-        if (!rating) {
-            loggerConfig.error(ctx, "Rating not found", scp);
-            throw new ErrorHandler(404, "rating tidak ditemukan");
-        }
-
-        loggerConfig.info(ctx, "Rating retrieved successfully", scp);
-
-        return {}
+    if (!ratingExists) {
+        loggerConfig.error(ctx, "Rating not found", scp);
+        throw new ErrorHandler(404, "rating tidak ditemukan");
     }
+
+    const ratings = await prisma.ratingProduct.findFirst({
+        where: { 
+            id: userRequest.id,
+        },
+        include: {
+            user: {
+                select: {
+                    username: true,
+                }
+            }
+        }
+    });
+
+    if (!ratings) {
+        loggerConfig.error(ctx, "Rating not found", scp);
+        throw new ErrorHandler(404, "rating tidak ditemukan");
+    }
+
+    loggerConfig.info(ctx, "Rating retrieved successfully", scp);
+
+    return {
+        ...ratings
+    };
+}
+
 
     static async deleteRating(req: deleteRating) {
         const ctx = "Delete Rating";
