@@ -52,4 +52,5 @@ publicApi.delete(`${globalEnv.PREFIX}/wishlist/delete/:id`,Jwt.jwtValidator,wish
 publicApi.post(`${globalEnv.PREFIX}/rating/create`,Jwt.jwtValidator,RattingController.createRating)
 publicApi.put(`${globalEnv.PREFIX}/rating/update/:id`,Jwt.jwtValidator,RattingController.updateRating)
 publicApi.get(`${globalEnv.PREFIX}/rating/product/:id`,Jwt.jwtValidator,RattingController.getRatingByProduct)
+publicApi.delete(`${globalEnv.PREFIX}/rating/delete/:id`,Jwt.jwtValidator,RattingController.deleteRating)
 

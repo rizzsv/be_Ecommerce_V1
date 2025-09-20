@@ -107,7 +107,7 @@ export class RatingService {
 }
 
 
-    static async deleteRating(req: deleteRating) {
+    static async deleteRating(req: deleteRating, userId: string) {
         const ctx = "Delete Rating";
         const scp = "Rating";
 
@@ -123,7 +123,7 @@ export class RatingService {
         }
 
         await prisma.ratingProduct.delete({
-            where: { id: userRequest.id },
+            where: { id: userRequest.id, user_id: userId },
         });
 
         loggerConfig.info(ctx, "Rating deleted successfully", scp);

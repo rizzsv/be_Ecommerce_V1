@@ -66,4 +66,23 @@ export class RattingController {
             next(error);
         }
     }
+    
+    static async deleteRating(
+        req: CustomRequest,
+        res: Response,
+        next: NextFunction
+    ) : Promise<void> {
+        try {
+            const request = req.params.id;
+            const userId = req.user?.id;
+            if (!userId) {
+                throw new ErrorHandler(401, "User tidak terautentikasi");
+            }
+            await logRequest(req, `DELETE /rating/delete ` + JSON.stringify(request));
+            const result = await RatingService.deleteRating({id: request}, userId);
+            Wrapper.success(res, true, result, "Sukses menghapus rating", 200);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
