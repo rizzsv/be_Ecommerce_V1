@@ -209,6 +209,16 @@ model Refund {
   user  User   @relation(fields: [user_id], references: [id])
 }
 
+model promo {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  code        String   @unique
+  title       String
+  description String?
+  discount    Float
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
 enum Role {
   ADMIN
