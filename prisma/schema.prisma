@@ -202,7 +202,6 @@ model refund {
   user_id    String   @db.ObjectId
   reason     String
   Status     refundStatus  @default(PENDING)
-  ammount    Float
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

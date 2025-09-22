@@ -4,7 +4,6 @@ export interface refundModel {
     user_id : number
     reason : string
     status : string
-    ammount : number
     created_at : Date
     updated_at : Date
 }
