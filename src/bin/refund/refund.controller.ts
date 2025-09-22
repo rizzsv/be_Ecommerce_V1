@@ -26,4 +26,21 @@ export class RefundController {
             next(error);
         }
     }
+
+    static async getRefundById(
+        req: CustomRequest,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> {
+        try {
+            const request = req.params.id;
+
+            await logRequest(req, `GET /refund/getById ${JSON.stringify(request)}`);
+
+            const response = await RefundService.getRefundByUser({id: request})
+            Wrapper.success(res, true, response, "Sukses mendapatkan refund", 200);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
