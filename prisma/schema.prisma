@@ -201,7 +201,7 @@ model refund {
   order_id   String   @db.ObjectId
   user_id    String   @db.ObjectId
   reason     String
-  Status     String   @default("PENDING")
+  Status     refundStatus  @default(PENDING)
   ammount    Float
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -243,6 +243,13 @@ enum PaymentMethod {
   BCA
   MANDIRI
   BRI
+}
+
+enum refundStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
 }
 
 enum Courier {

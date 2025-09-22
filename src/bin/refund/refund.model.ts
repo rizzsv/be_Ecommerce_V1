@@ -8,3 +8,15 @@ export interface refundModel {
     created_at : Date
     updated_at : Date
 }
+
+export interface getRefundId {
+    refund_id : number
+}
+
+export interface getRefundOrder {
+    refund_id : number
+    search?: string
+    periode: number
+    page: number
+    quantity: number
+}
