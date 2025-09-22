@@ -6,8 +6,14 @@ import { OrderController } from '../bin/order/order.controller'
 import { CartController } from '../bin/Cart/cart.controller'
 import { wishlistController } from '../bin/wishlist/wishlist.controller'
 import { RattingController } from '../bin/rating/rating.controller'
+import { Role } from '@prisma/client'
 
 export const publicApi = express.Router()
+
+const roles = {
+    ADMIN: Role.ADMIN,
+    USER : Role.USER
+}
 
 /** Login */
 publicApi.post(`${globalEnv.PREFIX}/login`, UserController.Login)
@@ -52,5 +58,5 @@ publicApi.delete(`${globalEnv.PREFIX}/wishlist/delete/:id`,Jwt.jwtValidator,wish
 publicApi.post(`${globalEnv.PREFIX}/rating/create`,Jwt.jwtValidator,RattingController.createRating)
 publicApi.put(`${globalEnv.PREFIX}/rating/update/:id`,Jwt.jwtValidator,RattingController.updateRating)
 publicApi.get(`${globalEnv.PREFIX}/rating/product/:id`,Jwt.jwtValidator,RattingController.getRatingByProduct)
-publicApi.delete(`${globalEnv.PREFIX}/rating/delete/:id`,Jwt.jwtValidator,RattingController.deleteRating)
+publicApi.delete(`${globalEnv.PREFIX}/rating/delete/:id`,Jwt.jwtValidator,Jwt.allowedRole(roles.USER, roles.ADMIN),RattingController.deleteRating)
 

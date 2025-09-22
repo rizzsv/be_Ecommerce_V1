@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { Wrapper } from "../../utils/wrapper.utils";
 import { logRequest } from "../../helper/logger.request";
 import { CustomRequest, ErrorHandler } from "../../config/custom.config";
-import { createRating, getRatingByProduct, updateRating } from "./rating.model";
+import { createRating, deleteRating, getRatingByProduct, updateRating } from "./rating.model";
 import { RatingService } from "./rating.service";
 
 export class RattingController {
@@ -73,14 +73,14 @@ export class RattingController {
         next: NextFunction
     ) : Promise<void> {
         try {
-            const request = req.params.id;
+            const request = req.body as deleteRating
             const userId = req.user?.id;
             if (!userId) {
                 throw new ErrorHandler(401, "User tidak terautentikasi");
             }
             await logRequest(req, `DELETE /rating/delete ` + JSON.stringify(request));
-            const result = await RatingService.deleteRating({id: request}, userId);
-            Wrapper.success(res, true, result, "Sukses menghapus rating", 200);
+            const response = await RatingService.deleteRating(request, userId);
+            Wrapper.success(res, true, response, "Sukses menghapus rating", 200);
         } catch (error) {
             next(error);
         }

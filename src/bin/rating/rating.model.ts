@@ -18,5 +18,5 @@ export interface getRatingByProduct {
 }
 
 export interface deleteRating {
-    id: string;
+    ratting_id: string;
 }

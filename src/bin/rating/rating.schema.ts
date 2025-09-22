@@ -17,6 +17,6 @@ export class rattingSchema {
     })
 
     static readonly DeleteRating = Joi.object({
-        id: Joi.string().length(24).required(),
+        ratting_id: Joi.string().length(24).required(),
     })
 }

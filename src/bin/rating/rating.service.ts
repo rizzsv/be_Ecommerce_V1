@@ -4,6 +4,7 @@ import loggerConfig from "../../config/logger.config";
 import { ErrorHandler } from "../../config/custom.config";
 import { createRating, deleteRating, getRatingByProduct, updateRating } from "./rating.model";
 import { rattingSchema } from "./rating.schema";
+import { Role } from "@prisma/client";
 
 export class RatingService {
     static async createRating(req: createRating, userId: string) {
@@ -113,9 +114,22 @@ export class RatingService {
 
         const userRequest = Validator.Validate(rattingSchema.DeleteRating, req);
 
-        const rating = await prisma.ratingProduct.findUnique({
-            where: { id: userRequest.id },
+        const rating = await prisma.ratingProduct.count({
+            where: { id: userRequest.ratting_id, user_id: userId }
         });
+
+        // Allow admin to delete any rating
+        const user = await prisma.user.findUnique({
+            where: { id: userId }
+        });
+
+        if (user?.role === Role.ADMIN) {
+            await prisma.ratingProduct.delete({
+            where: { id: userRequest.ratting_id },
+            });
+            loggerConfig.info(ctx, "Rating deleted by admin successfully", scp);
+            return {};
+        }
 
         if (!rating) {
             loggerConfig.error(ctx, "Rating not found", scp);
@@ -123,7 +137,7 @@ export class RatingService {
         }
 
         await prisma.ratingProduct.delete({
-            where: { id: userRequest.id, user_id: userId },
+            where: { id: userRequest.ratting_id, user_id: userId },
         });
 
         loggerConfig.info(ctx, "Rating deleted successfully", scp);
