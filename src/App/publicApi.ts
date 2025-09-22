@@ -7,6 +7,7 @@ import { CartController } from '../bin/Cart/cart.controller'
 import { wishlistController } from '../bin/wishlist/wishlist.controller'
 import { RattingController } from '../bin/rating/rating.controller'
 import { Role } from '@prisma/client'
+import { RefundController } from '../bin/refund/refund.controller'
 
 export const publicApi = express.Router()
 
@@ -60,3 +61,5 @@ publicApi.put(`${globalEnv.PREFIX}/rating/update/:id`,Jwt.jwtValidator,RattingCo
 publicApi.get(`${globalEnv.PREFIX}/rating/product/:id`,Jwt.jwtValidator,RattingController.getRatingByProduct)
 publicApi.delete(`${globalEnv.PREFIX}/rating/delete/:id`,Jwt.jwtValidator,Jwt.allowedRole(roles.USER, roles.ADMIN),RattingController.deleteRating)
 
+/** Api for refund */
+publicApi.post(`${globalEnv.PREFIX}/refund/order`,Jwt.jwtValidator,RefundController.refundOrder)

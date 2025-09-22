@@ -1,9 +1,10 @@
+import { refundStatus } from "@prisma/client"
+
 export interface refundModel {
     id : number
-    order_number : string
-    user_id : number
+    order_id : string
     reason : string
-    status : string
+    status : refundStatus
     created_at : Date
     updated_at : Date
 }

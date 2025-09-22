@@ -45,7 +45,7 @@ privateApi.delete(`${globalEnv.PREFIX}/category/:id`,Jwt.jwtValidator,Jwt.allowe
 /** Api Order */
 
 privateApi.put(`${globalEnv.PREFIX}/order/update-status`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN),OrderController.updateOrderStatus)
-privateApi.get(`${globalEnv.PREFIX}/order/:id`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN),OrderController.getOrderById)
+privateApi.get(`${globalEnv.PREFIX}/order/:id`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN, roles.USER),OrderController.getOrderById)
 privateApi.get( `${globalEnv.PREFIX}/order`, Jwt.jwtValidator, Jwt.allowedRole(roles.ADMIN), OrderController.getAllOrders)
 privateApi.delete(`${globalEnv.PREFIX}/order/:id`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN),OrderController.deleteOrder)
 
