@@ -54,7 +54,7 @@ export class RefundController {
 
             await logRequest(req, `PUT /refund/update-status ${JSON.stringify(request)}`);
 
-            const response = await RefundService.updateStatusRefund(request)
+            const response = await RefundService.updateStatusRefund(request, request.status)
             Wrapper.success(res, true, response, 'Sukses mengupdate status refund', 200);
         } catch (error) {
             next(error);
