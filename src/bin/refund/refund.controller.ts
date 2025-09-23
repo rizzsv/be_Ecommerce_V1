@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { Wrapper } from "../../utils/wrapper.utils";
 import { logRequest } from "../../helper/logger.request";
 import { CustomRequest, ErrorHandler } from "../../config/custom.config";
-import { refundModel } from "./refund.model";
+import { refundModel, updateRefundStatus } from "./refund.model";
 import { RefundService } from "./refund.service";
 
 export class RefundController {
@@ -39,6 +39,23 @@ export class RefundController {
 
             const response = await RefundService.getRefundByUser({id: request})
             Wrapper.success(res, true, response, "Sukses mendapatkan refund", 200);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async updateRefundStatus(
+        req: CustomRequest,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> {
+        try {
+            const request = req.body as updateRefundStatus
+
+            await logRequest(req, `PUT /refund/update-status ${JSON.stringify(request)}`);
+
+            const response = await RefundService.updateStatusRefund(request)
+            Wrapper.success(res, true, response, 'Sukses mengupdate status refund', 200);
         } catch (error) {
             next(error);
         }

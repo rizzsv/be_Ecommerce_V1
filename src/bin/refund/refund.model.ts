@@ -14,6 +14,11 @@ export interface getRefundId {
     user_id? : string
 }
 
+export interface updateRefundStatus {
+    refund_id : string
+    status: refundStatus
+}
+
 export interface getRefundOrder {
     search?: string
     periode: number

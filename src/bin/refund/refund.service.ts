@@ -1,7 +1,7 @@
 import loggerConfig from "../../config/logger.config";
 import prisma from "../../config/prisma.config";
 import { Validator } from "../../utils/validator.utils";
-import { getRefundId, refundModel } from "./refund.model";
+import { getRefundId, refundModel, updateRefundStatus } from "./refund.model";
 import { refundSchema } from "./refund.schema";
 
 export class RefundService {
@@ -124,4 +124,39 @@ export class RefundService {
         }
     }
 
+    static async updateStatusRefund(req: updateRefundStatus) {
+        const ctx = "Update Refund Status"
+        const scp = "Refund"
+
+        const userRequest = Validator.Validate(refundSchema.updateRefundStatus, req);
+
+        const isRefundExist = await prisma.refund.findFirst({
+            where: {
+                id: userRequest.refund_id,
+            }
+        });
+
+        if(!isRefundExist) {
+            loggerConfig.error(ctx, "Refund not found", scp);
+            throw new Error("Refund tidak ditemukan");
+        }
+
+        userRequest.refund_id ??= isRefundExist.id
+        userRequest.status ??= isRefundExist.status
+
+        const refund = await prisma.refund.update({
+            where: {
+                id: userRequest.refund_id,
+            },
+            data: {
+                status: userRequest.status,
+            }
+        });
+
+        loggerConfig.info(ctx, "Refund status updated successfully", scp);
+
+        return {
+            ...refund
+        }
+    }
 }
