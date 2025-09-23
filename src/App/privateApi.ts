@@ -8,6 +8,7 @@ import { ProductController } from '../bin/product/product.controller'
 import  upload  from '../helper/upload.helper'
 import { categoryController } from '../bin/category/category.controller'
 import { OrderController } from '../bin/order/order.controller'
+import { RefundController } from '../bin/refund/refund.controller'
 
 export const privateApi = express.Router()
 
@@ -51,4 +52,7 @@ privateApi.delete(`${globalEnv.PREFIX}/order/:id`,Jwt.jwtValidator,Jwt.allowedRo
 
 // get Category By Slug
 privateApi.get(`${globalEnv.PREFIX}/category/slug/:slug`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN),categoryController.getCategoryBySlug)
+
+/** Api Refund */
+privateApi.put(`${globalEnv.PREFIX}/refund/update-status`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN),RefundController.updateRefundStatus)
 

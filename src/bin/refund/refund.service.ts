@@ -1,7 +1,8 @@
 import loggerConfig from "../../config/logger.config";
 import prisma from "../../config/prisma.config";
 import { Validator } from "../../utils/validator.utils";
-import { refundModel } from "./refund.model";
+import { refundStatus } from "@prisma/client";
+import { getRefundId, refundModel, updateRefundStatus } from "./refund.model";
 import { refundSchema } from "./refund.schema";
 
 export class RefundService {
@@ -28,7 +29,7 @@ export class RefundService {
         const isOrderExist = await prisma.order.findUnique({
             where: { id: userRequest.order_id },
             include: {
-                orderItems: { // pastikan relasi ini sesuai model kamu
+                orderItems: {
                     include: {
                         product: true
                     }
@@ -41,37 +42,124 @@ export class RefundService {
             throw new Error("Order tidak ditemukan");
         }
 
+        // buat refund request dengan status awal PENDING
         const refund = await prisma.refund.create({
             data: {
                 user_id: userId,
                 order_id: userRequest.order_id,
                 reason: userRequest.reason,
-                status: userRequest.status,
+                status: refundStatus.PENDING, // default pending
             }
         });
 
-        for (const item of isOrderExist.orderItems) {
-            await prisma.product.update({
-                where: { id: item.product_id },
-                data: {
-                    stock: { increment: item.quantity }
-                }
-            });
-        }
-
-        await prisma.orderItem.deleteMany({
-            where: { order_id: userRequest.order_id }
+        // update status order jadi REFUND_REQUESTED / REFUND_PENDING
+        await tx.order.update({
+            where: { id: userRequest.order_id },
+            data: { status: refundStatus.PENDING }
         });
 
-        // baru hapus order
-        await prisma.order.delete({
-            where: { id: userRequest.order_id }
-        });
-
-        loggerConfig.info(ctx, "Refund created, order deleted, stock restored", scp);
+        loggerConfig.info(ctx, "Refund created, waiting for approval", scp);
 
         return refund;
     });
 }
 
+    static async getRefundByUser(req: getRefundId) {
+        const ctx = "Get Refund By User"
+        const scp = "Refund"
+
+        const userRequest = Validator.Validate(refundSchema.getRefundId, req);
+
+        const isRefundExist = await prisma.refund.findFirst({
+            where: {
+                id: userRequest.refund_id,
+            },
+        });
+
+        if (!isRefundExist) {
+            loggerConfig.error(ctx, "Refund not found", scp);
+            throw new Error("Refund tidak ditemukan");
+        }
+
+        const refund = await prisma.refund.findFirst({
+            where: {
+                id: userRequest.refund_id,
+                user_id: userRequest.user_id
+            }, include: {
+                user: {
+                    select: {
+                        username: true,
+                        phoneNum: true,
+                    },
+                },
+                order: {
+                    select: {
+                        id: true,
+                        total_amount: true,
+                        shipping_address: true,
+                    }
+                }
+            }
+        });
+
+        if (!refund) {
+            loggerConfig.error(ctx, "Refund not found", scp);
+            throw new Error("Refund tidak ditemukan");
+        }
+
+        loggerConfig.info(ctx, "Refund retrieved successfully", scp);
+
+        return {
+            ...refund
+        }
+    }
+
+    static async updateStatusRefund(req: updateRefundStatus, status: refundStatus) {
+    const ctx = "Update Refund Status"
+    const scp = "Refund"
+
+    return await prisma.$transaction(async (tx) => {
+        const refund = await prisma.refund.findUnique({
+            where: { id: req.refund_id },
+            include: {
+                order: {
+                    include: { orderItems: true }
+                }
+            }
+        });
+
+        if (!refund) {
+            loggerConfig.error(ctx, "Refund not found", scp);
+            throw new Error("Refund tidak ditemukan");
+        }
+
+        const updatedRefund = await prisma.refund.update({
+            where: { id: req.refund_id },
+            data: { status: status }
+        });
+
+        if (status === "APPROVED" && refund.order) {
+            // baru balikin stok
+            for (const item of refund.order.orderItems) {
+                await prisma.product.update({
+                    where: { id: item.product_id },
+                    data: { stock: { increment: item.quantity } }
+                });
+            }
+
+            await prisma.order.update({
+                where: { id: refund.order.id },
+                data: { status: "REFUNDED" }
+            });
+
+            // kalau memang perlu, hapus orderItems & order
+            // await tx.orderItem.deleteMany({ where: { order_id: refund.order.id } });
+            // await tx.order.delete({ where: { id: refund.order.id } });
+        }
+
+        loggerConfig.info(ctx, `Refund status updated to ${status}`, scp);
+
+        return updatedRefund;
+    });
+}
 }

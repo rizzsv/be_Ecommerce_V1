@@ -10,11 +10,16 @@ export interface refundModel {
 }
 
 export interface getRefundId {
-    refund_id : number
+    id : string
+    user_id? : string
+}
+
+export interface updateRefundStatus {
+    refund_id : string
+    status: refundStatus
 }
 
 export interface getRefundOrder {
-    refund_id : number
     search?: string
     periode: number
     page: number
