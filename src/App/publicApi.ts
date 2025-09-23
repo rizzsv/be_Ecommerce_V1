@@ -63,4 +63,4 @@ publicApi.delete(`${globalEnv.PREFIX}/rating/delete/:id`,Jwt.jwtValidator,Jwt.al
 
 /** Api for refund */
 publicApi.post(`${globalEnv.PREFIX}/refund/order`,Jwt.jwtValidator,RefundController.refundOrder)
-publicApi.get(`${globalEnv.PREFIX}/refund/getById/:id`,Jwt.jwtValidator,RefundController.getRefundById)
+publicApi.get(`${globalEnv.PREFIX}/refund/:id`,Jwt.jwtValidator,RefundController.getRefundById)

@@ -8,11 +8,14 @@ export class refundSchema {
     })
 
     static readonly getRefundId = Joi.object({
-        refund_id : Joi.number().required()
+        id: Joi.string().required().messages({
+            "string.length": "ID refund harus 24 karakter (ObjectId)",
+            "any.required": "ID refund wajib diisi",
+        }),
     })
 
     static readonly getRefundOrder = Joi.object({
-        refund_id : Joi.number().required(),
+        refund_id: Joi.number().required(),
         search: Joi.string().allow("", null),
         periode: Joi.number().required(),
         page: Joi.number().required(),
