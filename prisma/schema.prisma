@@ -215,9 +215,8 @@ model promo {
   title       String
   description String?
   discount    Float
-  expiresAt   DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  startDate   DateTime
+  endDate     DateTime
 }
 
 enum Role {

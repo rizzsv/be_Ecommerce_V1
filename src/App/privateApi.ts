@@ -9,6 +9,7 @@ import  upload  from '../helper/upload.helper'
 import { categoryController } from '../bin/category/category.controller'
 import { OrderController } from '../bin/order/order.controller'
 import { RefundController } from '../bin/refund/refund.controller'
+import { PromoController } from '../bin/ads/promo/promo.controller'
 
 export const privateApi = express.Router()
 
@@ -56,3 +57,5 @@ privateApi.get(`${globalEnv.PREFIX}/category/slug/:slug`,Jwt.jwtValidator,Jwt.al
 /** Api Refund */
 privateApi.put(`${globalEnv.PREFIX}/refund/update-status`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN),RefundController.updateRefundStatus)
 
+/** Api Promo */
+privateApi.post(`${globalEnv.PREFIX}/promo/add`,Jwt.jwtValidator,Jwt.allowedRole(roles.ADMIN),PromoController.addPromo) 
