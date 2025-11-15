@@ -1,0 +1,66 @@
+import express from 'express'
+import { globalEnv } from '../utils/globalEnv.utils'
+import { UserController } from '../bin/user/user.controller'
+import { Jwt } from '../helper/jwt.helper'
+import { OrderController } from '../bin/order/order.controller'
+import { CartController } from '../bin/Cart/cart.controller'
+import { wishlistController } from '../bin/wishlist/wishlist.controller'
+import { RattingController } from '../bin/rating/rating.controller'
+import { Role } from '@prisma/client'
+import { RefundController } from '../bin/refund/refund.controller'
+
+export const publicApi = express.Router()
+
+const roles = {
+    ADMIN: Role.ADMIN,
+    USER : Role.USER
+}
+
+/** Login */
+publicApi.post(`${globalEnv.PREFIX}/login`, UserController.Login)
+
+/** Register */
+publicApi.post(`${globalEnv.PREFIX}/regist`, UserController.CreateUser)
+
+/** Api Forget Password */
+
+// request otp
+publicApi.post(
+    `${globalEnv.PREFIX}/user/otp`,
+    UserController.RequestOtp
+)
+
+// confirm otp
+publicApi.post(
+    `${globalEnv.PREFIX}/user/otp/confirm`,
+    UserController.ConfirmOtp
+)
+
+/** api for user */
+
+publicApi.put( `${globalEnv.PREFIX}/user`,Jwt.jwtValidator,UserController.UpdateUserByUser)
+publicApi.put(`${globalEnv.PREFIX}/user/change-password`, UserController.ChangePassword)
+
+/** Api for user order */
+publicApi.post( `${globalEnv.PREFIX}/order`,Jwt.jwtValidator,OrderController.createOrder)
+
+/** Api for cart */
+publicApi.post(`${globalEnv.PREFIX}/cart`,Jwt.jwtValidator,CartController.createCart)
+publicApi.put(`${globalEnv.PREFIX}/cart`,Jwt.jwtValidator, CartController.updateCart)
+publicApi.get(`${globalEnv.PREFIX}/cart`,Jwt.jwtValidator,CartController.getCart)
+publicApi.delete( `${globalEnv.PREFIX}/cart/:id`, Jwt.jwtValidator, CartController.deleteCart)
+
+/** Api for wishlist */
+publicApi.post(`${globalEnv.PREFIX}/wishlist/create`,Jwt.jwtValidator,wishlistController.createWishlist)
+publicApi.get(`${globalEnv.PREFIX}/wishlist`,Jwt.jwtValidator,wishlistController.getWishList)
+publicApi.delete(`${globalEnv.PREFIX}/wishlist/delete/:id`,Jwt.jwtValidator,wishlistController.deleteWishlist)
+
+/** Api for rating */
+publicApi.post(`${globalEnv.PREFIX}/rating/create`,Jwt.jwtValidator,RattingController.createRating)
+publicApi.put(`${globalEnv.PREFIX}/rating/update/:id`,Jwt.jwtValidator,RattingController.updateRating)
+publicApi.get(`${globalEnv.PREFIX}/rating/product/:id`,Jwt.jwtValidator,RattingController.getRatingByProduct)
+publicApi.delete(`${globalEnv.PREFIX}/rating/delete/:id`,Jwt.jwtValidator,Jwt.allowedRole(roles.USER, roles.ADMIN),RattingController.deleteRating)
+
+/** Api for refund */
+publicApi.post(`${globalEnv.PREFIX}/refund/order`,Jwt.jwtValidator,RefundController.refundOrder)
+publicApi.get(`${globalEnv.PREFIX}/refund/:id`,Jwt.jwtValidator,RefundController.getRefundById)
